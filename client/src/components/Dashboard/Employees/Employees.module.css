@@ -1,0 +1,49 @@
+.container {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    max-width: 100%;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+  }
+  
+  .mobileFilterToggle {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  
+  .filterToggleButton {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #333;
+  }
+  
+  .filterIcon {
+    color: #666;
+  }
+  
+  .avatarCell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .employeeAvatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  /* Table header styles */
+  :global(.table th) {
+    background-color: #4a148c !important;
+    color: white !important;
+  }

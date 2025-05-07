@@ -1,0 +1,30 @@
+/* Candidates.module.css */
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background-color: #ffffff;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+  }
+  
+  .mobileFilterToggle {
+    padding: 16px 16px 0;
+  }
+  
+  .filterToggleButton {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #4b5563;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+  }
+  
+  .filterIcon {
+    width: 16px;
+    height: 16px;
+    margin-right: 4px;
+  }

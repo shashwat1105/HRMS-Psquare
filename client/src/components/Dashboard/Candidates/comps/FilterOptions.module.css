@@ -1,0 +1,203 @@
+/* FilterOptions.module.css */
+.filterControls {
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    gap: 12px;
+  }
+  
+  .filterGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+  }
+  
+  .hidden {
+    display: none !important;
+  }
+  
+  .searchGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+  }
+  
+  .searchWrapper {
+    position: relative;
+    width: 100%;
+  }
+  
+  .searchIcon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    color: #9ca3af;
+  }
+  
+  .searchInput {
+    width: 100%;
+    padding: 12px 16px 12px 40px;
+    border: 1px solid #d1d5db;
+    border-radius: 2.5rem;
+    font-size: 14px;
+  }
+  
+  .addButton {
+    background-color: #5b21b6;
+    color: white;
+    padding: 8px 30px;
+    border: none;
+    border-radius: 2.5rem;
+    font-size: 14px;
+    cursor: pointer;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  
+  .addButton:hover {
+    background-color: hsl(264, 67%, 35%);
+  }
+  
+  .clearButton {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #dc2626;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px 0;
+    align-self: flex-start;
+  }
+  
+  .clearIcon {
+    width: 16px;
+    height: 16px;
+    margin-right: 4px;
+  }
+  
+  .customDropdown {
+    position: relative;
+    margin-right: 12px;
+  }
+  
+  .dropdownButton {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+    min-width: 120px;
+    font-size: 16px;
+    color: #333;
+    transition: all 0.2s;
+  }
+  
+  .dropdownButton:hover {
+    border-color: #4D007D;
+  }
+  
+  .dropdownButton.activeFilter {
+    border-color: #4D007D;
+    color: #4D007D;
+  }
+  
+  .dropdownButtonIcon {
+    margin-left: 8px;
+    width: 16px;
+    height: 16px;
+  }
+  
+  .dropdownMenu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    z-index: 200;
+    min-width: 160px;
+    margin-top: 4px;
+    overflow: hidden;
+  }
+  
+  .dropdownItem {
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #333;
+    transition: background-color 0.2s;
+  }
+  
+  .dropdownItem:hover {
+    background-color: #f5f5f5;
+  }
+  
+  .dropdownItem.selected {
+    background-color: rgba(77, 0, 125, 0.1);
+    color: #4D007D;
+  }
+  
+  .clearButton {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    background-color: transparent;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #666;
+    transition: all 0.2s;
+  }
+  
+  .clearButton:hover {
+    color: #4D007D;
+    border-color: #4D007D;
+  }
+  
+  .clearIcon {
+    margin-right: 4px;
+    width: 16px;
+    height: 16px;
+  }
+  
+  @media (min-width: 640px) {
+    .filterGroup {
+      flex-direction: row;
+    }
+  }
+  
+  @media (min-width: 768px) {
+    .filterControls {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    
+    .filterGroup {
+      width: auto;
+    }
+    
+    .searchGroup {
+      flex-direction: row;
+      width: auto;
+    }
+    
+    .searchWrapper {
+      width: 250px;
+    }
+    
+    .addButton {
+      margin-left: 8px;
+    }
+  }

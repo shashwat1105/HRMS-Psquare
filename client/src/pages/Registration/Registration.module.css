@@ -1,0 +1,321 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+  }
+  .container {
+    display: flex;
+    flex-direction: column;
+    min-height: auto; /* Changed from fixed height */
+    width: 100%;
+    padding: 20px;
+    margin: 20px auto; /* Added margin for better spacing on large screens */
+    max-width: 1200px; /* Added max-width to prevent container from getting too wide */
+}
+
+  
+  .logoContainer {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 20px 0;
+    gap: 10px;
+    align-items: center;
+  }
+  
+  .logo {
+    color: #4D007D;
+    font-size: 26px;
+    font-weight: bold;
+    width: 70px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .logoBox {
+    width: 30px;
+    height: 30px;
+    border: 5px solid #4D007D;
+    border-radius: 0.3rem;
+  }
+  
+  .contentContainer {
+    display: flex;
+    flex: 1;
+    width: 100%;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 0 auto;
+    max-width: 1200px;
+    box-shadow: 0 4px 50px 0px rgba(0, 0, 0, 0.1);
+  }
+  
+  .leftSection {
+    width: 50%;
+    background-color: #4D007D;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    padding: 40px;
+    position: relative;
+  }
+  
+  .imageContainer {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+  }
+  
+  .dashboardImage {
+    width: 100%;
+    max-width: 600px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .textContainer {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  
+  .title {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+  
+  .description {
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  
+  .dotsContainer {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: auto;
+    padding-bottom: 20px;
+  }
+  
+  .dot {
+    width: 12px;
+    height: 12px;
+    background-color: rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
+    cursor: pointer;
+  }
+  
+  .dot.active {
+    background-color: white;
+  }
+  
+  .rightSection {
+    width: 50%;
+    background-color: white;
+    display: flex;
+    align-items: start;
+    justify-content: center;
+    padding: 40px;
+  }
+  
+  .formContainer {
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  .formTitle {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 24px;
+    text-align: center;
+  }
+  
+  .form {
+    width: 100%;
+  }
+  
+  .formGroup {
+    margin-bottom: 20px;
+  }
+  
+  .label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #333;
+  }
+  
+  .input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+  }
+  
+  .input:focus {
+    border-color: #4D007D;
+  }
+  
+  .passwordContainer {
+    position: relative;
+  }
+  
+  .eyeIcon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #777;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .eyeIcon svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .registerButton {
+    width: 100%;
+    padding: 14px;
+    background-color: #4D007D;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.3s;
+  }
+  
+  .registerButton:hover {
+    background-color: #3b0060;
+  }
+  
+  .loginLink {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 14px;
+    color: #666;
+  }
+  
+  .loginLink a {
+    color: #4D007D;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  
+  .loginLink a:hover {
+    text-decoration: underline;
+  }
+  
+
+
+/* Add these to your existing Registration.module.css */
+
+.forgotPasswordContainer {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 20px;
+  }
+  
+  .forgotPassword {
+    font-size: 14px;
+    color: #777;
+    text-decoration: none;
+  }
+  
+  .forgotPassword:hover {
+    text-decoration: underline;
+    color: #4D007D;
+  }
+  
+  .disabledButton {
+    background-color: #e0e0e0 !important;
+    color: #333 !important;
+    cursor: not-allowed !important;
+  }
+  
+  .loginLink {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 14px;
+    color: #666;
+  }
+  
+  .loginLink a {
+    color: #4D007D;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  
+  .loginLink a:hover {
+    text-decoration: underline;
+  }
+
+  /* Responsive styles */
+  @media (max-width: 992px) {
+    .contentContainer {
+        max-width: 900px;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+        margin: 0 auto; /* Remove top/bottom margin on mobile */
+        min-height: 100vh; /* Full height only on mobile */
+    }
+    
+    .contentContainer {
+        flex-direction: column;
+        max-width: 100%;
+        margin: 0 auto;
+        min-height: auto; /* Let content determine height */
+    }
+    
+    .leftSection, .rightSection {
+        width: 100%;
+    }
+    
+    .leftSection {
+        padding: 30px 20px;
+        display: none; /* Hide left section on mobile */
+    }
+    
+    .rightSection {
+        padding: 30px 20px;
+    }
+    
+    .formContainer {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 576px) {
+    .container {
+        padding: 0;
+        margin: 0; /* Remove all margins on smallest screens */
+    }
+    
+    .contentContainer {
+        border: none;
+        box-shadow: none;
+        border-radius: 0;
+    }
+    
+    .rightSection {
+        padding: 20px 15px;
+    }
+}

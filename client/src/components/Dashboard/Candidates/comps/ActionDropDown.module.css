@@ -1,0 +1,42 @@
+/* ActionDropdown.module.css */
+.actionDropdown {
+    position: absolute;
+    right: 0;
+    z-index: 200;
+    margin-top: 8px;
+    padding: 18px 6px;
+    width: 200px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e5e7eb;
+    animation: fadeIn 0.2s ease-out;
+  }
+  
+  .dropdownItem {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 8px 16px;
+    text-align: left;
+    font-size: 14px;
+    color: #374151;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .dropdownItem:hover {
+    background-color: #f3f4f6;
+  }
+  
+  .dropdownIcon {
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
