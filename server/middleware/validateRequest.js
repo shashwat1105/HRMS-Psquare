@@ -1,10 +1,9 @@
 import { validationResult } from 'express-validator';
-import { StatusCodes } from 'http-status-codes';
 
 const validateRequest = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(StatusCodes.BAD_REQUEST).json({
+    return res.status(400).json({
       success: false,
       errors: errors.array().map((err) => err.msg),
     });

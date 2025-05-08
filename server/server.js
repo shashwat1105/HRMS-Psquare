@@ -21,7 +21,7 @@ app.use(cors({
 app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
+app.use(cookieParser(process.env.COOKIE_SECRET || 'your_default_secret'));
 
 // Rate limiting
 const limiter = rateLimit({
@@ -37,11 +37,11 @@ import employeeRoutes from './routes/employeeRoutes.js';
 import attendanceRoutes from './routes/attendanceRoutes.js';
 import leaveRoutes from './routes/leaveRoutes.js';
 
-app.use('/api/auth', authRoutes);
-app.use('/api/candidates', candidateRoutes);
-app.use('/api/employees', employeeRoutes);
-app.use('/api/attendance', attendanceRoutes);
-app.use('/api/leaves', leaveRoutes);
+app.use('/auth', authRoutes);
+app.use('/candidates', candidateRoutes);
+app.use('/employees', employeeRoutes);
+app.use('/attendance', attendanceRoutes);
+app.use('/leaves', leaveRoutes);
 
 // Error handling middleware
 app.use(errorHandler);

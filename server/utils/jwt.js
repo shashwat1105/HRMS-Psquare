@@ -1,22 +1,30 @@
 import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
 
-export const createJWT = ({ payload }) => {
-  const token = jwt.sign(payload, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRE,
+dotenv.config();
+
+const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_EXPIRE = process.env.JWT_EXPIRE || '2h';
+
+export const createJWT = (payload) => {
+  return jwt.sign(payload, JWT_SECRET, {
+    expiresIn: JWT_EXPIRE,
   });
-  return token;
 };
 
-export const isTokenValid = (token) => jwt.verify(token, process.env.JWT_SECRET);
+export const verifyJWT = (token) => {
+  return jwt.verify(token, JWT_SECRET);
+};
 
 export const attachCookiesToResponse = ({ res, user }) => {
-  const token = createJWT({ payload: user });
-  const oneDay = 1000 * 60 * 60 * 24;
-
-  res.cookie('token', token, {
+  const token = createJWT(user);
+  
+  const cookieOptions = {
     httpOnly: true,
-    expires: new Date(Date.now() + oneDay),
+    expires: new Date(Date.now() + 2 * 60 * 60 * 1000), // 2 hours
     secure: process.env.NODE_ENV === 'production',
     signed: true,
-  });
+  };
+
+  res.cookie('token', token, cookieOptions);
 };
