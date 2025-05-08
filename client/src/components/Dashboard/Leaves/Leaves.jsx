@@ -1,58 +1,50 @@
-import { useState } from "react";
-import { ChevronDown, ChevronLeft, ChevronRight, Search, Plus, FileText } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Filter, Plus } from "lucide-react";
 import styles from "./Leaves.module.css";
 import Navbar from "../Candidates/comps/NavBar";
 import FilterOptions from "../Candidates/comps/FilterOptions";
-import DataTable from "../Candidates/comps/DataTable";
+import LeaveForm from "./LeavesForm";
 import ModalForm from "../AddCandidateModal/AddCandidateModal";
  
 
-export default function LeavesManagement() {
+export default function LeavesPage() {
   const [isMobile, setIsMobile] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("All");
+  const [statusFilter, setStatusFilter] = useState("");
+  // const [leaveTypeFilter, setLeaveTypeFilter] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentMonth, setCurrentMonth] = useState(new Date());
 
-  const statusOptions = ["All", "Pending", "Approved", "Rejected"];
+  const statusOptions = ["Approved", "Pending", "Rejected"];
+  // const leaveTypeOptions = ["Annual", "Sick", "Maternity", "Paternity", "Unpaid"];
 
+  // Sample leave data - you might want to lift this state up
   const [leaves, setLeaves] = useState([
     {
       id: 1,
-      name: 'Jane Copper',
-      position: 'Intern',
-      date: '15/09/24',
-      reason: 'Family function',
-      status: 'Pending',
-      avatar: '/api/placeholder/32/32',
-      hasDocs: false
+      name: "Jane Cooper",
+      position: "Full Time Designer",
+      date: "10/09/24",
+      reason: "Visiting House",
+      status: "Approved",
+      type: "Annual",
+      hasDocuments: true,
     },
     {
       id: 2,
-      name: 'Arlene McCoy',
-      position: 'Full Time',
-      date: '10/09/24',
-      reason: 'Medical leave',
-      status: 'Approved',
-      avatar: '/api/placeholder/32/32',
-      hasDocs: true
+      name: "Cody Fisher",
+      position: "Senior Backend Developer",
+      date: "08/09/24",
+      reason: "Family Emergency",
+      status: "Pending",
+      type: "Sick",
+      hasDocuments: false,
     },
-    {
-      id: 3,
-      name: 'Cody Fisher',
-      position: 'Senior',
-      date: '08/09/24',
-      reason: 'Personal',
-      status: 'Approved',
-      avatar: '/api/placeholder/32/32',
-      hasDocs: false
-    }
   ]);
 
-  // Filter leaves based on search and status
   const filteredLeaves = leaves.filter(leave => {
-    if (statusFilter !== "All" && leave.status !== statusFilter) return false;
+    if (statusFilter && leave.status !== statusFilter) return false;
+    // if (leaveTypeFilter && leave.type !== leaveTypeFilter) return false;
     if (searchTerm) {
       const lowerSearch = searchTerm.toLowerCase();
       return (
@@ -64,63 +56,31 @@ export default function LeavesManagement() {
     return true;
   });
 
-  // Calendar navigation
-  const prevMonth = () => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1));
-  const nextMonth = () => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1));
-
-  // Generate calendar days with leave counts
-  const generateCalendarDays = () => {
-    const year = currentMonth.getFullYear();
-    const month = currentMonth.getMonth();
-    const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
-    const daysInMonth = lastDay.getDate();
-    const startingDay = firstDay.getDay();
-
-    // Count leaves per day
-    const leaveCounts = {};
-    leaves.forEach(leave => {
-      if (leave.status === 'Approved') {
-        const [day, leaveMonth, leaveYear] = leave.date.split('/').map(Number);
-        if (leaveMonth === month + 1 && leaveYear === year) {
-          leaveCounts[day] = (leaveCounts[day] || 0) + 1;
-        }
-      }
-    });
-
-    const days = [];
-    
-    // Empty cells for days before the 1st
-    for (let i = 0; i < startingDay; i++) {
-      days.push(<div key={`empty-${i}`} className={styles.calendarEmptyDay}></div>);
-    }
-
-    // Days of the month
-    for (let day = 1; day <= daysInMonth; day++) {
-      const hasLeaves = leaveCounts[day] > 0;
-      days.push(
-        <div 
-          key={`day-${day}`} 
-          className={`${styles.calendarDay} ${hasLeaves ? styles.hasLeaves : ''}`}
-        >
-          <span className={styles.dayNumber}>{day}</span>
-          {hasLeaves && (
-            <span className={styles.leaveCount}>{leaveCounts[day]}</span>
-          )}
-        </div>
-      );
-    }
-
-    return days;
+  const handleSaveLeave = (newLeave) => {
+    const newId = leaves.length > 0 ? Math.max(...leaves.map(l => l.id)) + 1 : 1;
+    setLeaves(prev => [...prev, { 
+      id: newId,
+      ...newLeave,
+      hasDocuments: newLeave.document ? true : false
+    }]);
   };
 
-  // Format month/year display
-  const formatMonthYear = () => {
-    return currentMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  const handleStatusChange = (leaveId, newStatus) => {
+    setLeaves(prev => 
+      prev.map(leave => 
+        leave.id === leaveId 
+          ? { ...leave, status: newStatus } 
+          : leave
+      )
+    );
   };
 
-  // Get approved leaves for the sidebar
-  const approvedLeaves = leaves.filter(leave => leave.status === 'Approved');
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   return (
     <div className={styles.container}>
@@ -146,100 +106,40 @@ export default function LeavesManagement() {
         statusFilter={statusFilter}
         setStatusFilter={setStatusFilter}
         statusOptions={statusOptions}
-        hidePositionFilter={true}
+        hidePositionFilter={true} // This will now properly hide the position filter
         addButtonText="Add Leave"
         onAddClick={() => setIsModalOpen(true)}
       />
       
-      <div className={styles.mainContent}>
-        <div className={styles.leavesTable}>
-          <DataTable
-            columns={["Sr. no","Profile", "Name", "Date", "Reason", "Status", "Docs"]}
-            data={filteredLeaves.map(leave => ({
-              id: leave.id,
-              profile: (
-                <img 
-                  src={leave.avatar} 
-                  alt={leave.name} 
-                  className={styles.employeeAvatar} 
-                />
-              ),
-              name: leave.name,
-              date: leave.date,
-              reason: leave.reason,
-              status: (
-                <span className={`${styles.statusBadge} ${
-                  leave.status === 'Approved' ? styles.approved : 
-                  leave.status === 'Pending' ? styles.pending : 
-                  styles.rejected
-                }`}>
-                  {leave.status}
-                </span>
-              ),
-              docs: leave.hasDocs ? (
-                <a href="#" className={styles.docsLink}>
-                  <FileText size={16} />
-                </a>
-              ) : '--'
-            }))}
-          />
-        </div>
-        
-        <div className={styles.calendarSidebar}>
-          <div className={styles.calendarSection}>
-            <h3 className={styles.sectionTitle}>Leave Calendar</h3>
-            <div className={styles.calendarHeader}>
-              <button onClick={prevMonth} className={styles.calendarNavButton}>
-                <ChevronLeft size={16} />
-              </button>
-              <span className={styles.calendarMonth}>{formatMonthYear()}</span>
-              <button onClick={nextMonth} className={styles.calendarNavButton}>
-                <ChevronRight size={16} />
-              </button>
-            </div>
-            
-            <div className={styles.calendarGrid}>
-              {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(day => (
-                <div key={day} className={styles.calendarDayHeader}>{day}</div>
-              ))}
-              {generateCalendarDays()}
-            </div>
-          </div>
-          
-          <div className={styles.approvedLeaves}>
-            <h3 className={styles.sectionTitle}>Approved Leaves</h3>
-            {approvedLeaves.map(leave => (
-              <div key={leave.id} className={styles.approvedLeaveItem}>
-                <img src={leave.avatar} alt={leave.name} className={styles.leaveAvatar} />
-                <div className={styles.leaveInfo}>
-                  <div className={styles.leaveName}>{leave.name}</div>
-                  <div className={styles.leaveDate}>{leave.date}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-      
+      <LeaveForm
+        leaveRequests={filteredLeaves}
+        onStatusChange={handleStatusChange}
+      />
+
       <ModalForm
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onSave={(newLeave) => {
-          const newId = Math.max(...leaves.map(l => l.id)) + 1;
-          setLeaves([...leaves, { ...newLeave, id: newId, status: 'Pending' }]);
-          setIsModalOpen(false);
-        }}
-        title="Leave Application"
+        onSave={handleSaveLeave}
+        title="Leave"
+        mode="add"
         fields={[
           { name: 'name', label: 'Employee Name', type: 'text', required: true },
           { name: 'position', label: 'Position', type: 'text', required: true },
+          // { 
+          //   name: 'type', 
+          //   label: 'Leave Type', 
+          //   type: 'select',
+          //   options: leaveTypeOptions,
+          //   required: true 
+          // },
           { name: 'date', label: 'Leave Date', type: 'date', required: true },
           { name: 'reason', label: 'Reason', type: 'textarea', required: true },
           { 
             name: 'document', 
             label: 'Supporting Document', 
             type: 'file', 
-            accept: '.pdf,.doc,.docx,.jpg,.png' 
+            accept: '.pdf,.doc,.docx,.jpg,.png',
+            required: false 
           }
         ]}
       />

@@ -12,9 +12,10 @@ export default function FilterOptions({
   positionFilter,
   setPositionFilter,
   statusOptions,
-  positionOptions,
+  positionOptions = [], // Default to empty array
   addButtonText,
   onAddClick,
+  hidePositionFilter = false, // Default to false
 }) {
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
   const [showPositionDropdown, setShowPositionDropdown] = useState(false);
@@ -31,7 +32,9 @@ export default function FilterOptions({
 
   const clearFilters = () => {
     setStatusFilter("");
-    setPositionFilter("");
+    if (!hidePositionFilter) {
+      setPositionFilter("");
+    }
   };
 
   return (
@@ -66,37 +69,39 @@ export default function FilterOptions({
           )}
         </div>
         
-        {/* Position Dropdown */}
-        <div className={styles.customDropdown}>
-          <button 
-            className={`${styles.dropdownButton} ${positionFilter ? styles.activeFilter : ''}`}
-            onClick={(e) => {
-              e.stopPropagation();
-              setShowPositionDropdown(!showPositionDropdown);
-              setShowStatusDropdown(false);
-            }}
-          >
-            {positionFilter || "Position"}
-            <ChevronDown className={styles.dropdownButtonIcon} />
-          </button>
-          {showPositionDropdown && (
-            <div className={styles.dropdownMenu}>
-              {positionOptions.map((option, index) => (
-                <div
-                  key={index}
-                  className={`${styles.dropdownItem} ${positionFilter === option ? styles.selected : ''}`}
-                  onClick={() => handlePositionSelect(option)}
-                >
-                  {option}
-                  {positionFilter === option && <Check className={styles.checkIcon} size={16} />}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        {/* Position Dropdown - conditionally rendered */}
+        {!hidePositionFilter && (
+          <div className={styles.customDropdown}>
+            <button 
+              className={`${styles.dropdownButton} ${positionFilter ? styles.activeFilter : ''}`}
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowPositionDropdown(!showPositionDropdown);
+                setShowStatusDropdown(false);
+              }}
+            >
+              {positionFilter || "Position"}
+              <ChevronDown className={styles.dropdownButtonIcon} />
+            </button>
+            {showPositionDropdown && (
+              <div className={styles.dropdownMenu}>
+                {positionOptions.map((option, index) => (
+                  <div
+                    key={index}
+                    className={`${styles.dropdownItem} ${positionFilter === option ? styles.selected : ''}`}
+                    onClick={() => handlePositionSelect(option)}
+                  >
+                    {option}
+                    {positionFilter === option && <Check className={styles.checkIcon} size={16} />}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
         
         {/* Clear filters button */}
-        {(statusFilter || positionFilter) && (
+        {(statusFilter || (!hidePositionFilter && positionFilter)) && (
           <button 
             onClick={clearFilters}
             className={styles.clearButton}

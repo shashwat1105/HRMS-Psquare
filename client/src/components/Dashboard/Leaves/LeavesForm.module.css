@@ -1,0 +1,396 @@
+.leaveManagementContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    padding: 20px;
+    background-color: #f5f5f5;
+    width: 100%;
+  }
+  
+  @media (min-width: 768px) {
+    .leaveManagementContainer {
+      flex-direction: row;
+    }
+  }
+  
+  .appliedLeavesPanel, .leaveCalendarPanel {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    width: 100%;
+  }
+  
+  .panelHeader {
+    background-color: #5e0e8b;
+    color: white;
+    padding: 15px 20px;
+  }
+  
+  .panelHeader h2 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+  }
+  
+  .tableHeader {
+    display: none;
+  }
+  
+  @media (min-width: 640px) {
+    .tableHeader {
+      display: flex;
+      padding: 10px 20px;
+      border-bottom: 1px solid #eee;
+      font-size: 14px;
+      font-weight: 600;
+      color: #444;
+    }
+  }
+  
+  .leaveRow {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+    align-items: center;
+  }
+  
+  .column {
+    flex: 1 1 50%;
+    margin-bottom: 8px;
+  }
+  
+  .profileColumn {
+    flex: 0 0 40px;
+  }
+  
+  .nameColumn {
+    flex: 1;
+    padding-left: 10px;
+  }
+  
+  @media (min-width: 640px) {
+    .column {
+      flex: 1;
+      margin-bottom: 0;
+    }
+    
+    .profileColumn {
+      flex: 0.5;
+    }
+    
+    .nameColumn {
+      padding-left: 0;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .leaveRow {
+      flex-direction: column;
+      align-items: flex-start;
+      position: relative;
+      padding-bottom: 20px;
+    }
+    
+    .profileColumn, .nameColumn {
+      flex-direction: row;
+      display: flex;
+      align-items: center;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+    
+    .nameColumn {
+      flex: 1;
+    }
+    
+    .dateColumn, .reasonColumn {
+      display: flex;
+      width: 100%;
+      margin-bottom: 8px;
+    }
+    
+    .dateColumn:before {
+      content: "Date: ";
+      font-weight: 600;
+      margin-right: 5px;
+      min-width: 60px;
+    }
+    
+    .reasonColumn:before {
+      content: "Reason: ";
+      font-weight: 600;
+      margin-right: 5px;
+      min-width: 60px;
+    }
+    
+    .statusColumn, .docsColumn {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+    }
+    
+    .docsColumn {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+    }
+  }
+  
+  .avatar {
+    width: 40px;
+    height: 40px;
+    background-color: #5e0e8b;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    flex-shrink: 0;
+  }
+  
+  .employeeName {
+    font-weight: 500;
+    font-size: 14px;
+  }
+  
+  .employeePosition {
+    font-size: 12px;
+    color: #777;
+  }
+  
+  .dropdownContainer {
+    position: relative;
+  }
+  
+  .statusButton {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1px solid #4caf50;
+    background-color: white;
+    color: #4caf50;
+    cursor: pointer;
+    font-size: 13px;
+    min-width: 100px;
+  }
+  
+  .statusButton.approved {
+    border-color: #4caf50;
+    color: #4caf50;
+  }
+  
+  .statusButton.pending {
+    border-color: #ff9800;
+    color: #ff9800;
+  }
+  
+  .statusButton.rejected {
+    border-color: #f44336;
+    color: #f44336;
+  }
+  
+  .statusDropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 10;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    width: 120px;
+    margin-top: 5px;
+  }
+  
+  @media (max-width: 480px) {
+    .statusDropdown {
+      left: auto;
+      right: 0;
+    }
+  }
+  
+  .dropdownItem {
+    padding: 8px 15px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: background-color 0.2s;
+  }
+  
+  .dropdownItem:hover {
+    background-color: #f5f5f5;
+  }
+  
+  .dropdownItem.approved {
+    color: #4caf50;
+  }
+  
+  .dropdownItem.pending {
+    color: #ff9800;
+  }
+  
+  .dropdownItem.rejected {
+    color: #f44336;
+  }
+  
+  .docIcon {
+    color: #666;
+  }
+  
+  .docLink {
+    cursor: pointer;
+  }
+  
+  .calendarNav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    margin-bottom: 10px;
+  }
+  
+  .navButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #555;
+    padding: 5px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+  }
+  
+  .navButton:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .currentMonth {
+    font-weight: 500;
+  }
+  
+  .calendar {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    table-layout: fixed;
+  }
+  
+  .calendar th {
+    text-align: center;
+    padding: 10px 5px;
+    font-weight: 500;
+    font-size: 14px;
+  }
+  
+  .calendar td {
+    text-align: center;
+    padding: 8px 5px;
+    position: relative;
+    color: #333;
+    height: 35px;
+    vertical-align: middle;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  @media (min-width: 480px) {
+    .calendar td {
+      padding: 10px;
+      height: 40px;
+    }
+  }
+  
+  .calendar td:hover:not(.empty) {
+    background-color: #f5f5f5;
+  }
+  
+  .calendarDay {
+    position: relative;
+  }
+  
+  .empty {
+    background: none;
+    cursor: default;
+  }
+  
+  .hasLeave {
+    position: relative;
+    background-color: #f0e6f6;
+    color: #5e0e8b;
+    font-weight: 500;
+  }
+  
+  .hasLeave:hover {
+    background-color: #e5d7ee;
+  }
+  
+  .leaveIndicator {
+    width: 6px;
+    height: 6px;
+    background-color: #5e0e8b;
+    border-radius: 50%;
+    position: absolute;
+    bottom: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  @media (min-width: 480px) {
+    .leaveIndicator {
+      bottom: 6px;
+    }
+  }
+  
+  .approvedLeavesSection {
+    padding: 0 20px 20px;
+  }
+  
+  .approvedLeavesSection h3 {
+    color: #5e0e8b;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 15px;
+  }
+  
+  .approvedLeaveItem {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+  }
+  
+  @media (max-width: 359px) {
+    .approvedLeaveItem {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    
+    .employeeInfo {
+      margin-left: 0;
+      margin-top: 10px;
+      width: 100%;
+    }
+    
+    .leaveDate {
+      margin-left: 0;
+      margin-top: 5px;
+      width: 100%;
+    }
+  }
+  
+  .employeeInfo {
+    margin-left: 10px;
+    flex: 1;
+  }
+  
+  .leaveDate {
+    color: #555;
+    font-size: 14px;
+  }

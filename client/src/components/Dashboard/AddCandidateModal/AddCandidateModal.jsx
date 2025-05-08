@@ -49,18 +49,20 @@ const ModalForm = ({
 
   // Validate form whenever formData changes
   useEffect(() => {
-    const data = {};
-    fields.forEach(field => {
-      if (field.type === 'file') {
-        data[field.name] = null;
-      } else if (field.type === 'checkbox') {
-        data[field.name] = initialData[field.name] || false;
-      } else {
-        data[field.name] = initialData[field.name] || '';
-      }
-    });
-    setFormData(data);
-  }, [initialData, fields]);
+    if (isOpen && mode === "edit") {
+      const data = {};
+      fields.forEach(field => {
+        if (field.type === 'file') {
+          data[field.name] = null;
+        } else if (field.type === 'checkbox') {
+          data[field.name] = initialData?.[field.name] || false;
+        } else {
+          data[field.name] = initialData?.[field.name] || '';
+        }
+      });
+      setFormData(data);
+    }
+  }, [isOpen, mode, fields.length, JSON.stringify(initialData)]);
   
 
   const handleInputChange = (e) => {
