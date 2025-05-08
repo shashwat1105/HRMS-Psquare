@@ -1,0 +1,78 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background-color: #ffffff;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    overflow: visible;
+  }
+  
+  .mobileFilterToggle {
+    padding: 16px 16px 0;
+  }
+  
+  .filterToggleButton {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #4b5563;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+  }
+  
+  .filterIcon {
+    width: 16px;
+    height: 16px;
+    margin-right: 4px;
+  }
+  
+  .avatarCell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .employeeAvatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  .actionButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+  }
+  
+  .actionIcon {
+    color: #666;
+  }
+  
+  /* Status badge styles */
+  :global(.statusBadge) {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  
+  :global(.statusPresent) {
+    background-color: #f0fdf4;
+    color: #16a34a;
+  }
+  
+  :global(.statusAbsent) {
+    background-color: #fef2f2;
+    color: #dc2626;
+  }
+  
+  /* Table header styles */
+  :global(.table th) {
+    background-color: #4a148c !important;
+    color: white !important;
+  }

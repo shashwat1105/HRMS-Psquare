@@ -1,0 +1,13 @@
+/* StatusBadge.module.css */
+.statusText {
+    font-weight: 500;
+    font-size: 14px;
+  }
+  
+  .statusPresent {
+    color: #16a34a; /* Green text */
+  }
+  
+  .statusAbsent {
+    color: #dc2626; /* Red text */
+  }

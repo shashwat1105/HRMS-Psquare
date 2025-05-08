@@ -1,6 +1,8 @@
 import CandidatesContent from './Candidates/CandidatesComponent';
 import styles from '../../pages/Dashboard/Dashboard.module.css';
 import EmployeeManagement from './Employees/Employees';
+import AttendanceManagement from './Attendance/Attendance';
+import LeavesManagement from './Leaves/Leaves';
 
 export default function MainContent({ activeTab }) {
   const renderContent = () => {
@@ -10,7 +12,9 @@ export default function MainContent({ activeTab }) {
       case 'Employees':
         return <EmployeeManagement/>
       case 'Attendance':
+        return <AttendanceManagement/>
       case 'Leaves':
+        return <LeavesManagement/>
       case 'Logout':
       default:
         return (

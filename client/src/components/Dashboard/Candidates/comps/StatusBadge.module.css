@@ -87,3 +87,11 @@
     background-color: #FFEBEE;
     color: #D32F2F;
   }
+  .statusPresent{
+    background-color: #E8F5E9;
+    color: #388E3C;
+  }
+    .statusAbsent{
+        background-color: #FFEBEE;
+        color: #D32F2F;
+    }
