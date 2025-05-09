@@ -60,71 +60,48 @@ export const getAllCandidates = async (req, res) => {
 
 };
 
+// In your candidate controller
 export const updateCandidateStatus = async (req, res) => {
-
-    try{
-
-        const { id } = req.params;
-        const { status } = req.body;
-        
-        const candidate = await Candidate.findOneAndUpdate(
-            { _id: id, createdBy: req.user.userId },
-            { status },
-            { new: true, runValidators: true }
-        );
-        
-        if (!candidate) {
-            return res.status(400).json({message: `No candidate found with id ${id}`,
-            });
-        }
-        
-        res.status(200).json({message:"updated Successfully!", data: candidate  });
-    }catch(error){
-        console.log("Server error occured!",err);
-        return res.status(500).json({message:"Srever error occured",err})
+    try {
+      // Verify authentication first
+     
+  
+      const { id } = req.params;
+      const { status } = req.body;
+  
+      const candidate = await Candidate.findOneAndUpdate(
+        { _id: id },
+        { status },
+        { new: true }
+      );
+  
+      if (!candidate) {
+        return res.status(404).json({ message: 'Candidate not found' });
+      }
+  
+      res.status(200).json({ 
+        success: true,
+        message: 'Status updated',
+        data: candidate
+      });
+    } catch (error) {
+      console.error('Controller error:', error);
+      res.status(500).json({ message: 'Server error', error: error.message });
     }
-};
-
-export const downloadResume = async (req, res) => {
-  const { id } = req.params;
-  
-  const candidate = await Candidate.findOne({
-    _id: id,
-    createdBy: req.user.userId,
-  });
-  
-  if (!candidate) {
-    return res.status(StatusCodes.NOT_FOUND).json({
-      success: false,
-      message: `No candidate found with id ${id}`,
-    });
-  }
-  
-  res.status(StatusCodes.OK).json({
-    success: true,
-    data: {
-      resumeUrl: candidate.resume,
-    },
-  });
-};
+  };
+ 
 
 export const deleteCandidate = async (req, res) => {
   const { id } = req.params;
   
-  const candidate = await Candidate.findOneAndDelete({
-    _id: id,
-    createdBy: req.user.userId,
-  });
+  const candidate = await Candidate.findByIdAndDelete(id);
   
   if (!candidate) {
-    return res.status(StatusCodes.NOT_FOUND).json({
+    return res.status(404).json({
       success: false,
       message: `No candidate found with id ${id}`,
     });
   }
   
-  res.status(StatusCodes.OK).json({
-    success: true,
-    data: {},
-  });
+  res.status(200).json({message: 'Candidate deleted successfully', data: {},});
 };

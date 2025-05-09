@@ -2,66 +2,32 @@ import mongoose from 'mongoose';
 
 const EmployeeSchema = new mongoose.Schema({
   name: {
-    type: String,
-    required: [true, 'Please provide name'],
-    trim: true,
-    maxlength: [50, 'Name cannot be more than 50 characters'],
+type: String, required: true, trim: true,
   },
   email: {
-    type: String,
-    required: [true, 'Please provide email'],
-    match: [
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-      'Please provide a valid email',
-    ],
-    unique: true,
-    trim: true,
-    lowercase: true,
+    type: String,required: true,unique: true,trim: true,
   },
   phone: {
-    type: String,
-    required: [true, 'Please provide phone number'],
-    maxlength: [20, 'Phone number cannot be longer than 20 characters'],
+    type: String,required: true,maxlength: 10
   },
   position: {
-    type: String,
-    required: [true, 'Please provide position'],
-    trim: true,
-    maxlength: [50, 'Position cannot be more than 50 characters'],
+    type: String,required: true,  trim: true,
+    enum:["Intern","Full Time","Senior","Junior","Team Lead"],
+    default: "Intern"
   },
   department: {
-    type: String,
-    required: [true, 'Please provide department'],
-    trim: true,
-    maxlength: [50, 'Department cannot be more than 50 characters'],
-  },
+    type: String,required: true,trim: true,
+    enum: ['Designer', 'Backend Development', 'Human Resource', 'Frontend Development', 'Marketing'],
+    default: 'Designer',
+},
   dateOfJoining: {
-    type: Date,
-    required: [true, 'Please provide date of joining'],
+    type: Date,required: true,
   },
   photo: {
-    type: String,
-    default: 'default.jpg',
+    type: String,required: true,
   },
-  role: {
-    type: String,
-    enum: ['employee', 'manager', 'admin'],
-    default: 'employee',
-  },
-  status: {
-    type: String,
-    enum: ['active', 'inactive', 'on_leave', 'terminated'],
-    default: 'active',
-  },
-  createdBy: {
-    type: mongoose.Schema.ObjectId,
-    ref: 'User',
-    required: true,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-});
+ 
+ 
+},{ timestamps: true });
 
 export default mongoose.model('Employee', EmployeeSchema);

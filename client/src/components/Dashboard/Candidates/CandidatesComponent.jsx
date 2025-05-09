@@ -6,7 +6,7 @@ import FilterOptions from "./comps/FilterOptions";
 import DataTable from "./comps/DataTable";
 // import CandidateModal from "../AddCandidateModal/AddCandidateModal";
 import ModalForm from "../AddCandidateModal/AddCandidateModal";
-import { addCandidate, getAllCandidates, updateCandidateStatus } from "../../../store/slices/candidateSlice";
+import { addCandidate, deleteCandidate, getAllCandidates, updateCandidateStatus } from "../../../store/slices/candidateSlice";
 import { useDispatch, useSelector } from "react-redux";
  
 
@@ -38,16 +38,33 @@ const { candidates = [],loading } = useSelector((state) => state.candidate) || {
 
   const filteredCandidates = (candidates || []).filter(candidate => {
     if (!candidate) return false;
-    if (statusFilter && candidate.status !== statusFilter) return false;
-    if (positionFilter && !candidate.position?.includes(positionFilter)) return false;
+    
+    // Convert all values to lowercase for case-insensitive comparison
+    const candidateStatus = candidate.status?.toLowerCase() || '';
+    const candidatePosition = candidate.position?.toLowerCase() || '';
+    const searchTermLower = searchTerm.toLowerCase();
+    const statusFilterLower = statusFilter.toLowerCase();
+    const positionFilterLower = positionFilter.toLowerCase();
+  
+    // Status filter (exact match)
+    if (statusFilter && candidateStatus !== statusFilterLower) {
+      return false;
+    }
+  
+    // Position filter (exact match)
+    if (positionFilter && candidatePosition !== positionFilterLower) {
+      return false;
+    }
+  
+    // Search term (partial match in multiple fields)
     if (searchTerm) {
-      const lowerSearch = searchTerm.toLowerCase();
       return (
-        candidate.name?.toLowerCase().includes(lowerSearch) ||
-        candidate.email?.toLowerCase().includes(lowerSearch) ||
-        candidate.position?.toLowerCase().includes(lowerSearch)
+        candidate.name?.toLowerCase().includes(searchTermLower) ||
+        candidate.email?.toLowerCase().includes(searchTermLower) ||
+        candidatePosition.includes(searchTermLower)
       );
     }
+  
     return true;
   });
   
@@ -100,16 +117,53 @@ const { candidates = [],loading } = useSelector((state) => state.candidate) || {
     }
   };
 
+
+  const handleDownloadResume = (id) => {
+    const candidate = candidates.find(c => c._id === id);
+    if (candidate?.resume) {
+      const downloadUrl = candidate.resume.replace('/upload/', '/upload/fl_attachment/');
+      const link = document.createElement("a");
+      link.href = downloadUrl;
+      link.download = `${candidate.name}-Resume.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } else {
+      alert("Resume not available for this candidate.");
+    }
+  };
+  
+
+  const handleDeleteCandidate = (id) => {
+    if (window.confirm('Are you sure you want to delete this candidate?')) {
+      dispatch(deleteCandidate(id))
+        .unwrap()
+        .then(() => {
+          dispatch(getAllCandidates()); // Refresh the list
+        })
+        .catch(err => console.log(err));
+    }
+  };
+
+  const resetFilters = () => {
+    setStatusFilter('');
+    setPositionFilter('');
+    setSearchTerm('');
+  };
+
   const actionItems = [
     {
       label: "Download Resume",
       icon: Download,
-      handler: (id) => console.log("Download", id)
+      handler: (id) => {
+       handleDownloadResume(id);
+      }
     },
     {
       label: "Delete Candidate",
       icon: Trash2,
       handler: (id) => {
+        handleDeleteCandidate(id);
         console.log("delete handler:",id)
         // setCandidates(prev => prev.filter(candidate => candidate.id !== id));
       }
@@ -155,6 +209,7 @@ if(loading) return <div>Loading......</div>
         positionOptions={positionOptions}
         addButtonText="Add Candidate"
         onAddClick={() => setIsModalOpen(true)}
+        onReset={resetFilters}
       />
       
       <DataTable

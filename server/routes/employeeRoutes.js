@@ -10,24 +10,10 @@ import upload from '../config/multer.js';
 
 const router = express.Router();
 
-router
-  .route('/')
-  .post(
-    authenticateUser,
-    authorizeRoles('hr'),
-    upload.single('photo'),
-    createEmployee
-  )
-  .get(authenticateUser, authorizeRoles('hr'), getAllEmployees);
+router.get('/getAll', getAllEmployees);
+router.post('/add',upload.fields({name:'photo', maxCount:1}),createEmployee )
 
-router
-  .route('/:id')
-  .patch(
-    authenticateUser,
-    authorizeRoles('hr'),
-    upload.single('photo'),
-    updateEmployee
-  )
-  .delete(authenticateUser, authorizeRoles('hr'), deleteEmployee);
+router.patch('update/:id',upload.fields('photo'),updateEmployee)
+  router.delete('/:id', deleteEmployee);
 
 export default router;

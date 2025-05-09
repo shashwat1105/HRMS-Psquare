@@ -42,7 +42,7 @@ export default function DataTable({
                         status={item.Status}
                         statusOptions={statusOptions}
                         onChange={(newStatus) => 
-                          onStatusChange(cellValue?.id, newStatus)
+                          onStatusChange(item.id, newStatus)
                         }
                       />
                     </td>
@@ -81,60 +81,4 @@ export default function DataTable({
 }
 
 
-// export default function DataTable({
-//   columns,
-//   data,
-//   onStatusChange,
-//   statusOptions,
-//   actionItems
-// }) {
-//   const [activeDropdown, setActiveDropdown] = useState(null);
-
-//   return (
-//     <div className={styles.tableContainer}>
-//       <table className={styles.table}>
-//         <thead>
-//           <tr>
-//             {columns.map((column, index) => (
-//               <th key={index}>{column}</th>
-//             ))}
-//           </tr>
-//         </thead>
-//         <tbody>
-//           {data.map((item) => (
-//             <tr key={item.id}>
-//               {columns.map((column) => {
-//                 const columnKey = column.replace(/\s+/g, '').toLowerCase();
-                
-//                 if (column === "Status") {
-//                   return (
-//                     <td key={`${item.id}-status`}>
-//                       <StatusBadge
-//                         status={item.Status} // Directly use the status value
-//                         statusOptions={statusOptions}
-//                         onChange={(newStatus) => onStatusChange(item.id, newStatus)}
-//                       />
-//                     </td>
-//                   );
-//                 }
-                
-//                 if (column === "Action") {
-//                   return (
-//                     <td key={`${item.id}-action`}>
-//                       <ActionDropdown 
-//                         items={actionItems}
-//                         onItemClick={(action) => action.handler(item.id)}
-//                       />
-//                     </td>
-//                   );
-//                 }
-                
-//                 return <td key={`${item.id}-${columnKey}`}>{item[column]}</td>;
-//               })}
-//             </tr>
-//           ))}
-//         </tbody>
-//       </table>
-//     </div>
-//   );
-// }
+ 

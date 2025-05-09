@@ -4,13 +4,15 @@
 }
 
 .statusBadge {
-  display: inline-flex;
+  display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 4px;
-  padding: 4px 12px;
+  padding: 8px 12px;
   border-radius: 16px;
   cursor: pointer;
   font-size: 14px;
+  width: 120px;
   font-weight: 500;
 }
 
@@ -48,8 +50,8 @@
 }
 
 /* Status colors */
-.statusNew { background: #e6f7ff; color: #1890ff; }
-.statusScheduled { background: #fff7e6; color: #fa8c16; }
-.statusOngoing { background: #f6ffed; color: #52c41a; }
-.statusSelected { background: #f6ffed; color: #52c41a; }
-.statusRejected { background: #fff1f0; color: #f5222d; }
+.statusNew { border:1px solid black; color: #080808; }
+.statusScheduled {border:1px solid #fa8c16; color: #fa8c16; }
+.statusOngoing { border:1px solid #52c41a; color: #52c41a; }
+.statusSelected {border:1px solid purple; color: purple; }
+.statusRejected { border:1px solid #f5222d; color: #f5222d; }

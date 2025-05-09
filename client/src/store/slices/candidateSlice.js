@@ -42,44 +42,33 @@ export const getAllCandidates=createAsyncThunk('candidate/getAll',async(_, {reje
     }
     }   
 )
-export const updateCandidateStatus=createAsyncThunk('candidate/updateStatus',async({id, status}, {rejectWithValue})=>{
-    try {
-        const response=await instance.patch(`/candidate/update/${id}`, {status},{
-            withCredentials:true,
-        });
-        if(!response){
-            throw new Error('Failed to update candidate status!');
+export const updateCandidateStatus = createAsyncThunk(
+    'candidate/updateStatus',
+    async ({ id, status }, { rejectWithValue }) => {
+      try {
+        const response = await instance.patch(
+          `/candidate/update/${id}`,
+          { status },
+          {
+            withCredentials: true,
+            headers: {
+              'Content-Type': 'application/json',
+            }
+          }
+        );
+        
+        if (!response.data) {
+          throw new Error('Failed to update status');
         }
         return response.data;
-    } catch (err) {
-        if (err.response) {
-            const message = err.response.data.message || "Failed to update candidate status!";
-            return rejectWithValue(message);
-          }
-          return rejectWithValue("Failed to update candidate status!");
+      } catch (err) {
+        console.error('Update error:', err.response?.data || err.message);
+        return rejectWithValue(err.response?.data?.message || 'Status update failed');
+      }
     }
-    }   
-)
-// export const downloadResume=createAsyncThunk('candidate/download',async(id, {rejectWithValue})=>{
-//     try {
-//         const response=await instance.get(`/candidate/${id}/resume`,{
-//             withCredentials:true,
-//         });
-//         if(!response){
-//             throw new Error('Failed to download resume!');
-//         }
-//         return response.data;
-//     } catch (err) {
-//         if (err.response) {
-//             const message = err.response.data.message || "Failed to download resume!";
-//             return rejectWithValue(message);
-//           }
-//           return rejectWithValue("Failed to download resume!");
-//     }
-//     }   
-// )
-
-const deleteCandidate=createAsyncThunk('candidate/delete',async(id, {rejectWithValue})=>{
+  );
+ 
+export const deleteCandidate=createAsyncThunk('candidate/delete',async(id, {rejectWithValue})=>{
     try {
         const response=await instance.delete(`/candidate/${id}`,{
             withCredentials:true,
@@ -157,18 +146,7 @@ const candidateSlice=createSlice({
             state.loading=false;
             state.error=action.payload;
         })
-        // .addCase(downloadResume.pending,(state)=>{
-        //     state.loading=true;
-        // })
-        // .addCase(downloadResume.fulfilled,(state)=>{
-        //     state.loading=false;
-        //     state.success=true;
-        // })
-
-        // .addCase(downloadResume.rejected,(state,action)=>{
-        //     state.loading=false;
-        //     state.error=action.payload;
-        // })
+ 
         .addCase(deleteCandidate.pending,(state)=>{
             state.loading=true;
         })

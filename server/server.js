@@ -9,7 +9,7 @@ import { connectDB } from './config/db.js';
 import errorHandler from './middleware/errorHandler.js';
 import authRoutes from './routes/authRoutes.js';
 import candidateRoutes from './routes/candidateRoutes.js';
-// import employeeRoutes from './routes/employeeRoutes.js';
+import employeeRoutes from './routes/employeeRoutes.js';
 // import attendanceRoutes from './routes/attendanceRoutes.js';
 // import leaveRoutes from './routes/leaveRoutes.js';
 
@@ -40,7 +40,7 @@ app.use(limiter);
 
 app.use('/auth', authRoutes);
 app.use('/candidate', candidateRoutes);
-// app.use('/employees', employeeRoutes);
+app.use('/employees', employeeRoutes);
 // app.use('/attendance', attendanceRoutes);
 // app.use('/leaves', leaveRoutes);
 
