@@ -6,7 +6,7 @@ import {
   updateEmployee,
   deleteEmployee,
 } from '../controllers/employeeController.js';
-import upload from '../utils/multer.js';
+import upload from '../config/multer.js';
 
 const router = express.Router();
 

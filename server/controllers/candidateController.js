@@ -1,79 +1,90 @@
 import Candidate from '../models/Candidate.js';
-import { StatusCodes } from 'http-status-codes';
-import { cloudinary } from '../config/cloudinary.js';
 import fs from 'fs';
 
 export const createCandidate = async (req, res) => {
-  req.body.createdBy = req.user.userId;
 
-  if (req.file) {
-    const result = await cloudinary.uploader.upload(req.file.path, {
-      resource_type: 'auto',
-      folder: 'hrms/resumes',
-    });
-    req.body.resume = result.secure_url;
-    fs.unlinkSync(req.file.path);
-  }
+    try{
 
-  const candidate = await Candidate.create(req.body);
-  
-  res.status(StatusCodes.CREATED).json({
-    success: true,
-    data: candidate,
-  });
+const { name, email, phone, position, experience } = req.body;
+
+const { userId } = req.user;
+if(!name || !email || !phone || !position || !experience) {
+
+    return res.status(400).json({ message: "Please provide all required fields" });
+}
+
+let resume='';
+if(req?.files?.resume?.[0]){
+    const path=req.files.resume[0].path;
+  resume=await uploadToCloudinary(path,'candidate');
+
+     fs.unlinkSync(path);
+}
+
+const newCandidate = await Candidate.create({
+    name,
+    email,
+    phone,
+    position,
+    experience,
+    resume,
+    createdBy: userId,
+})
+
+await newCandidate.save();
+
+return res.status(201).json({ message: "Candidate created successfully", candidate: newCandidate });
+
+    }catch(error){
+        console.log("Server error occured!",err);
+        return res.status(500).json({message:"Srever error occured",err})
+    }
+
 };
 
 export const getAllCandidates = async (req, res) => {
-  const { status, position, search } = req.query;
+
+  try{
+
+    const allusers = await Candidate.find({});
   
-  const queryObject = { createdBy: req.user.userId };
-  
-  if (status && status !== 'all') {
-    queryObject.status = status;
+  if (!allusers) {
+    return res.status(400).json({ message: 'No candidates found',});
   }
   
-  if (position && position !== 'all') {
-    queryObject.position = position;
+  res.status(200).json({message: 'All candidates fetched successfully', count: allusers.length, data: allusers});
+  }catch
+(error){
+    console.log("Server error occured!",err);
+    return res.status(500).json({message:"Srever error occured",err})
   }
-  
-  if (search) {
-    queryObject.$or = [
-      { name: { $regex: search, $options: 'i' } },
-      { email: { $regex: search, $options: 'i' } },
-      { phone: { $regex: search, $options: 'i' } },
-    ];
-  }
-  
-  const candidates = await Candidate.find(queryObject).sort('-createdAt');
-  
-  res.status(StatusCodes.OK).json({
-    success: true,
-    count: candidates.length,
-    data: candidates,
-  });
+
+
 };
 
 export const updateCandidateStatus = async (req, res) => {
-  const { id } = req.params;
-  const { status } = req.body;
-  
-  const candidate = await Candidate.findOneAndUpdate(
-    { _id: id, createdBy: req.user.userId },
-    { status },
-    { new: true, runValidators: true }
-  );
-  
-  if (!candidate) {
-    return res.status(StatusCodes.NOT_FOUND).json({
-      success: false,
-      message: `No candidate found with id ${id}`,
-    });
-  }
-  
-  res.status(StatusCodes.OK).json({
-    success: true,
-    data: candidate,
-  });
+
+    try{
+
+        const { id } = req.params;
+        const { status } = req.body;
+        
+        const candidate = await Candidate.findOneAndUpdate(
+            { _id: id, createdBy: req.user.userId },
+            { status },
+            { new: true, runValidators: true }
+        );
+        
+        if (!candidate) {
+            return res.status(400).json({message: `No candidate found with id ${id}`,
+            });
+        }
+        
+        res.status(200).json({message:"updated Successfully!", data: candidate  });
+    }catch(error){
+        console.log("Server error occured!",err);
+        return res.status(500).json({message:"Srever error occured",err})
+    }
 };
 
 export const downloadResume = async (req, res) => {

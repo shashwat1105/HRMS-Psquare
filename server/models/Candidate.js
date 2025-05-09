@@ -2,64 +2,36 @@ import mongoose from 'mongoose';
 
 const CandidateSchema = new mongoose.Schema({
   name: {
-    type: String,
-    required: [true, 'Please provide name'],
-    trim: true,
-    maxlength: [50, 'Name cannot be more than 50 characters'],
+    type: String,required: true,trim: true,
   },
   email: {
-    type: String,
-    required: [true, 'Please provide email'],
-    match: [
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-      'Please provide a valid email',
-    ],
-    unique: true,
-    trim: true,
-    lowercase: true,
+    type: String,required:true,unique: true,trim: true,
   },
   phone: {
-    type: String,
-    required: [true, 'Please provide phone number'],
-    maxlength: [20, 'Phone number cannot be longer than 20 characters'],
+ type: String,required: true,maxlength: 10,
   },
   position: {
-    type: String,
-    required: [true, 'Please provide position'],
-    trim: true,
-    maxlength: [50, 'Position cannot be more than 50 characters'],
+    type: String,required: true,trim: true,
   },
   status: {
-    type: String,
-    enum: ['new', 'scheduled', 'ongoing', 'selected', 'rejected'],
-    default: 'new',
+    type: String,enum: ['new', 'scheduled', 'ongoing', 'selected', 'rejected'],default: 'new',
   },
   experience: {
-    type: String,
-    required: [true, 'Please provide experience'],
-    trim: true,
+    type: String,required: true,trim: true,
   },
   resume: {
-    type: String,
-    required: [true, 'Please upload resume'],
+    type: String,required: true,
   },
   interviewDate: {
     type: Date,
   },
   feedback: {
-    type: String,
-    trim: true,
-    maxlength: [500, 'Feedback cannot be more than 500 characters'],
+    type: String,trim: true,
   },
   createdBy: {
-    type: mongoose.Schema.ObjectId,
-    ref: 'User',
-    required: true,
+    type: mongoose.Schema.ObjectId,ref: 'User',required: true,
   },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-});
+ 
+},{ timestamps: true });
 
 export default mongoose.model('Candidate', CandidateSchema);

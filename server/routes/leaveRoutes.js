@@ -8,18 +8,13 @@ import {
   downloadLeaveDoc,
   deleteLeave,
 } from '../controllers/leaveController.js';
-import upload from '../utils/multer.js';
+import upload from '../config/multer.js';
 
 const router = express.Router();
 
 router
   .route('/')
-  .post(
-    authenticateUser,
-    authorizeRoles('hr'),
-    upload.array('docs', 5),
-    createLeave
-  )
+  .post(authenticateUser,authorizeRoles('hr'),upload.array('docs', 5),createLeave)
   .get(authenticateUser, authorizeRoles('hr'), getAllLeaves);
 
 router

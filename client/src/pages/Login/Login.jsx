@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-// import { loginUser, resetAuthState } from '../../redux/features/auth/authSlice';
 import { useNavigate } from 'react-router-dom';
 import styles from '../Registration/Registration.module.css';
 import LogoSection from '../../components/Registration/LogoSection';
 import LeftSection from '../../components/Registration/LeftSection';
 import LoginForm from '../../components/Login/LoginForm';
-import { loginUser, resetAuthState } from '../../store/slices/authSlice';
+import { login, triggerLogout } from '../../store/slices/authSlice';
+import validator from 'validator';
+import toast from 'react-hot-toast';
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -17,20 +18,42 @@ const LoginPage = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { user, isLoading, isError, isSuccess, error } = useSelector((state) => state.auth);
+  const { user, isLoading, error, tokenExpiry } = useSelector((state) => state.auth);
 
+  // Handle side effects after login
   useEffect(() => {
-    if (isError) {
-      // Handle error (show toast or something)
-      console.error(error);
-    }
-
-    if (isSuccess || user) {
+    if (user) {
       navigate('/dashboard');
     }
+  }, [user, navigate]);
 
-    dispatch(resetAuthState());
-  }, [user, isError, isSuccess, error, navigate, dispatch]);
+  // Auto-logout when token expires
+  useEffect(() => {
+    let timer;
+
+    if (tokenExpiry) {
+      const remainingTime = tokenExpiry - Date.now();
+
+      if (remainingTime <= 0) {
+        dispatch(triggerLogout());
+        navigate('/login');
+      } else {
+        timer = setTimeout(() => {
+          dispatch(triggerLogout());
+          toast('Session expired. Logged out automatically.');
+          navigate('/login');
+        }, remainingTime);
+      }
+    }
+
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [tokenExpiry, dispatch, navigate]);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -40,27 +63,34 @@ const LoginPage = () => {
     });
   };
 
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(loginUser(formData));
+
+    if (!validator.isEmail(formData.email)) {
+      toast.error("Please enter a valid email address.");
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      toast.error("Password must be at least 6 characters long.");
+      return;
+    }
+
+    dispatch(login(formData));
   };
 
   const isFormValid = formData.email.trim() !== '' && formData.password.trim() !== '';
 
   return (
     <div className={styles.container}>
-      <LogoSection/>
+      <LogoSection />
       <div className={styles.contentContainer}>
-        <LeftSection/>
+        <LeftSection />
         <div className={styles.rightSection}>
-          <LoginForm 
-            isFormValid={isFormValid} 
+          <LoginForm
+            isFormValid={isFormValid}
             handleSubmit={handleSubmit}
-            togglePasswordVisibility={togglePasswordVisibility} 
+            togglePasswordVisibility={togglePasswordVisibility}
             handleChange={handleChange}
             isLoading={isLoading}
             error={error}

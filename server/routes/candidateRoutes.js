@@ -7,30 +7,16 @@ import {
   downloadResume,
   deleteCandidate,
 } from '../controllers/candidateController.js';
-import upload from '../utils/multer.js';
+import upload from '../config/multer.js';
 
 const router = express.Router();
 
-router
-  .route('/')
-  .post(
-    authenticateUser,
-    authorizeRoles('hr'),
-    upload.single('resume'),
-    createCandidate
-  )
-  .get(authenticateUser, authorizeRoles('hr'), getAllCandidates);
+router.get('/getAll',authenticateUser, authorizeRoles('hr'), getAllCandidates);
 
-router
-  .route('/:id/status')
-  .patch(authenticateUser, authorizeRoles('hr'), updateCandidateStatus);
+router.post('/add',authenticateUser,authorizeRoles('hr'),upload.fields([{name:'resume',maxCount:1}]),createCandidate);
 
-router
-  .route('/:id/resume')
-  .get(authenticateUser, authorizeRoles('hr'), downloadResume);
+router.patch('/update/:id',authenticateUser, authorizeRoles('hr'), updateCandidateStatus);
 
-router
-  .route('/:id')
-  .delete(authenticateUser, authorizeRoles('hr'), deleteCandidate);
+router.delete('/:id',authenticateUser, authorizeRoles('hr'), deleteCandidate);
 
 export default router;

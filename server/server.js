@@ -7,6 +7,11 @@ import cookieParser from 'cookie-parser';
 import rateLimit from 'express-rate-limit';
 import { connectDB } from './config/db.js';
 import errorHandler from './middleware/errorHandler.js';
+import authRoutes from './routes/authRoutes.js';
+import candidateRoutes from './routes/candidateRoutes.js';
+import employeeRoutes from './routes/employeeRoutes.js';
+import attendanceRoutes from './routes/attendanceRoutes.js';
+import leaveRoutes from './routes/leaveRoutes.js';
 
 const app = express();
 
@@ -31,11 +36,7 @@ const limiter = rateLimit({
 app.use(limiter);
 
 // Routes
-import authRoutes from './routes/authRoutes.js';
-import candidateRoutes from './routes/candidateRoutes.js';
-import employeeRoutes from './routes/employeeRoutes.js';
-import attendanceRoutes from './routes/attendanceRoutes.js';
-import leaveRoutes from './routes/leaveRoutes.js';
+
 
 app.use('/auth', authRoutes);
 app.use('/candidates', candidateRoutes);
@@ -46,7 +47,7 @@ app.use('/leaves', leaveRoutes);
 // Error handling middleware
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

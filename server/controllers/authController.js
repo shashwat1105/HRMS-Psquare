@@ -1,5 +1,7 @@
 import User from '../models/User.js';
 import { attachCookiesToResponse, verifyJWT } from '../utils/jwt.js';
+import jwt from 'jsonwebtoken';
+
 
 export const register = async (req, res) => {
     try {
@@ -7,10 +9,7 @@ export const register = async (req, res) => {
   
       const emailAlreadyExists = await User.findOne({ email });
       if (emailAlreadyExists) {
-        return res.status(400).json({
-          success: false,
-          message: 'Email already exists',
-        });
+        return res.status(400).json({ message: 'Email already exists' });
       }
   
       const user = await User.create({ fullName, email, password, role: 'hr' });
@@ -22,19 +21,19 @@ export const register = async (req, res) => {
         role: user.role
       };
   
-      attachCookiesToResponse({ res, user: tokenUser  });
-  
-      res.status(201).json({
-        success: true,
-        user: tokenUser ,
-      });
+const token = jwt.sign(tokenUser, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE });  
+
+res.cookie('token', token, {
+        httpOnly: true,
+        expires: new Date(Date.now() + 2 * 60 * 60 * 1000), // 2 hours
+        secure: process.env.NODE_ENV === 'production',
+        signed: true,
+        });
+      res.status(201).json({message: 'User registered successfully',user: tokenUser ,token:token});
+
     } catch (error) {
       console.error('Error during registration:', error); // Log the error
-      res.status(500).json({
-        success: false,
-        message: 'Registration failed',
-        error: error.message
-      });
+      res.status(500).json({ message: 'Registration failed',error: error});
     }
   };
   
@@ -44,26 +43,17 @@ export const login = async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({
-        success: false,
-        message: 'Please provide email and password',
-      });
+      return res.status(400).json({ message: 'Please provide email and password' });
     }
 
     const user = await User.findOne({ email }).select('+password');
     if (!user) {
-      return res.status(401).json({
-        success: false,
-        message: 'Invalid credentials',
-      });
+      return res.status(401).json({ message: 'Invalid credentials'});
     }
 
     const isPasswordCorrect = await user.comparePassword(password);
     if (!isPasswordCorrect) {
-      return res.status(401).json({
-        success: false,
-        message: 'Invalid credentials',
-      });
+      return res.status(401).json({ message: 'Invalid credentials' });
     }
 
     const tokenUser = {
@@ -73,12 +63,16 @@ export const login = async (req, res) => {
       role: user.role
     };
 
-    attachCookiesToResponse({ res, user: tokenUser });
+const token=jwt.sign(tokenUser,process.env.JWT_SECRET,{expiresIn: process.env.JWT_EXPIRE});
 
-    res.status(200).json({
-      success: true,
-      user: tokenUser,
-    });
+      res.cookie('token', token, {
+        httpOnly: true,
+        expires: new Date(Date.now() + 2 * 60 * 60 * 1000), // 2 hours
+        secure: process.env.NODE_ENV === 'production',
+        signed: true,
+      });
+    res.status(200).json({message:"User Login Successfully!",user: tokenUser,token:token});
+
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -117,9 +111,6 @@ export const authenticateUser = async (req, res, next) => {
     };
     next();
   } catch (error) {
-    return res.status(401).json({
-      success: false,
-      message: 'Authentication invalid',
-    });
+    return res.status(401).json({success: false, message: 'Authentication invalid' });
   }
 };

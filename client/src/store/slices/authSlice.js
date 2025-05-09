@@ -1,114 +1,140 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
-// import { apiUrl } from '../../utils/constants';
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { jwtDecode } from "jwt-decode";
+import instance from "../../utils/axios";
 
 
-const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-// Async thunk for user login
-export const loginUser = createAsyncThunk(
-  'auth/login',
-  async ({ email, password }, { rejectWithValue }) => {
+ 
+export const login=createAsyncThunk('auth/login',async(userData,{rejectWithValue})=>{
     try {
-      const response = await axios.post(`${apiUrl}/auth/login`, { email, password });
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response.data);
-    }
-  }
-);
+        const response=await instance.post('/auth/login', userData,{
+            withCredentials:true,
+        });
+        if(!response){
+            throw new Error('Login failed!');
+        }
+        return response.data;
+    } catch (err) {
+        if (err.response) {
+            const message = err.response.data.message || "Invalid Credentials";
+            return rejectWithValue(message);
+          }
+          return rejectWithValue("Login failed!");
+    }   
+}
+)
 
-// Async thunk for user registration
-export const registerUser = createAsyncThunk(
-  'auth/register',
-  async (userData, { rejectWithValue }) => {
+
+export const register=createAsyncThunk('auth/register',async(userData,{rejectWithValue})=>{
     try {
-      const response = await axios.post(`${apiUrl}/auth/register`, userData);
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response.data);
+        const response=await instance.post('/auth/register', userData,{
+            withCredentials:true,
+        });
+        if(!response){
+            throw new Error('Registration failed!');
+        }
+        return response.data;
+    } catch (err) {
+        if (err.response) {
+            const message = err.response.data.message || "Registration failed!";
+            return rejectWithValue(message);
+          }
+          return rejectWithValue("Registration failed!");
     }
-  }
-);
+    }
+)
 
-// Async thunk for user logout
-export const logoutUser = createAsyncThunk(
-  'auth/logout',
-  async (_, { rejectWithValue }) => {
+
+export const logout=createAsyncThunk('auth/logout',async(_, {rejectWithValue})=>{
     try {
-      const response = await axios.get(`${apiUrl}/auth/logout`);
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response.data);
+        const response=await instance.get('/auth/logout',{
+            withCredentials:true,
+        });
+        if(!response){
+            throw new Error('Logout failed!');
+        }
+        return response.data;
+    } catch (err) {
+        if (err.response) {
+            const message = err.response.data.message || "Logout failed!";
+            return rejectWithValue(message);
+          }
+          return rejectWithValue("Logout failed!");
     }
-  }
-);
+    }
+)
 
-const authSlice = createSlice({
-  name: 'auth',
-  initialState: {
-    user: null,
-    token: null,
-    isLoading: false,
-    isSuccess: false,
-    isError: false,
-    error: null,
-  },
-  reducers: {
-    resetAuthState: (state) => {
-      state.isLoading = false;
-      state.isSuccess = false;
-      state.isError = false;
-      state.error = null;
+ const authSlice = createSlice({
+    name:'auth',
+    initialState:{
+        loading:false,
+        user:null,
+        error:null,
+        token:null,
+        tokenExpiry:null,
     },
-  },
-  extraReducers: (builder) => {
-    // Login cases
-    builder.addCase(loginUser.pending, (state) => {
-      state.isLoading = true;
-    });
-    builder.addCase(loginUser.fulfilled, (state, action) => {
-      state.isLoading = false;
-      state.isSuccess = true;
-      state.user = action.payload.user;
-    });
-    builder.addCase(loginUser.rejected, (state, action) => {
-      state.isLoading = false;
-      state.isError = true;
-      state.error = action.payload?.message || 'Login failed';
-    });
+    reducers:{
+        triggerLogout: (state) => {
+            state.user = null;
+            state.token = null;
+            state.tokenExpiry = null;
+            state.error = null;
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+          },
+    },
+    extraReducers:(builder)=>{
+      builder
+        .addCase(login.pending,(state)=>{
+            state.loading=true;
+            state.error=null;
+        })
+        .addCase(login.fulfilled,(state,action)=>{
+            const {user,token}=action.payload;
+            const decoded=jwtDecode(token);
 
-    // Register cases
-    builder.addCase(registerUser.pending, (state) => {
-      state.isLoading = true;
-    });
-    builder.addCase(registerUser.fulfilled, (state, action) => {
-      state.isLoading = false;
-      state.isSuccess = true;
-      state.user = action.payload.user;
-    });
-    builder.addCase(registerUser.rejected, (state, action) => {
-      state.isLoading = false;
-      state.isError = true;
-      state.error = action.payload?.message || 'Registration failed';
-    });
+            state.loading=false;
+            state.user=user;
+            state.token=token;
+            state.tokenExpiry=decoded.exp*1000;
+            state.error=null;
 
-    // Logout cases
-    builder.addCase(logoutUser.pending, (state) => {
-      state.isLoading = true;
-    });
-    builder.addCase(logoutUser.fulfilled, (state) => {
-      state.isLoading = false;
-      state.isSuccess = true;
-      state.user = null;
-      state.token = null;
-    });
-    builder.addCase(logoutUser.rejected, (state, action) => {
-      state.isLoading = false;
-      state.isError = true;
-      state.error = action.payload?.message || 'Logout failed';
-    });
-  },
-});
+            localStorage.setItem('token', token);
+            localStorage.setItem('user', JSON.stringify(user));
+        })
+        .addCase(login.rejected,(state,action)=>{
+            state.loading=false;
+            state.error=action.payload;
+        })
+        .addCase(register.pending,(state)=>{
+            state.loading=true;
+            state.error=null;
+        })
+        .addCase(register.fulfilled,(state,action)=>{
+            state.loading=false;
+            state.user=action.payload.user;
+            state.error=null;
+        })
+        .addCase(register.rejected,(state,action)=>{
+            state.loading=false;
+            state.error=action.payload;
+        })
+        .addCase(logout.pending,(state)=>{
+            state.loading=true;
+            state.error=null;
+        })
+        .addCase(logout.fulfilled,(state)=>{
+            state.loading=false;
+            state.user=null;
+            state.error=null;
+        })
+        .addCase(logout.rejected,(state,action)=>{
+            state.loading=false;
+            state.error=action.payload;
+        })
+    }
 
-export const { resetAuthState } = authSlice.actions;
-export default authSlice.reducer;
+ })
+
+ export const { triggerLogout } = authSlice.actions;
+
+ export default authSlice.reducer;
