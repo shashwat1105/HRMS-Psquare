@@ -6,6 +6,8 @@ import FilterOptions from "./comps/FilterOptions";
 import DataTable from "./comps/DataTable";
 // import CandidateModal from "../AddCandidateModal/AddCandidateModal";
 import ModalForm from "../AddCandidateModal/AddCandidateModal";
+import { addCandidate, getAllCandidates, updateCandidateStatus } from "../../../store/slices/candidateSlice";
+import { useDispatch, useSelector } from "react-redux";
  
 
 export default function CandidatesTable() {
@@ -17,51 +19,85 @@ export default function CandidatesTable() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState("add"); // or "edit"
 const [editingCandidate, setEditingCandidate] = useState({});
+const dispatch=useDispatch();
+const { candidates = [],loading } = useSelector((state) => state.candidate) || {};
 
 
   const statusOptions = ["New", "Scheduled", "Ongoing", "Selected", "Rejected"];
   const positionOptions = ["Developer", "Designer", "Human Resource"];
 
-  const [candidates, setCandidates] = useState([
-    {
-      id: "01",
-      name: "Jacob William",
-      email: "jacob.william@example.com",
-      phone: "(252) 555-0111",
-      position: "Senior Developer",
-      status: "New",
-      experience: "1+"
-    },
-    // ... other candidates
-  ]);
 
-  const filteredCandidates = candidates.filter(candidate => {
+  useEffect(() => {
+
+    dispatch(getAllCandidates())
+    
+  }, []);
+  console.log(candidates)
+
+ 
+
+  const filteredCandidates = (candidates || []).filter(candidate => {
+    if (!candidate) return false;
     if (statusFilter && candidate.status !== statusFilter) return false;
-    if (positionFilter && !candidate.position.includes(positionFilter)) return false;
+    if (positionFilter && !candidate.position?.includes(positionFilter)) return false;
     if (searchTerm) {
       const lowerSearch = searchTerm.toLowerCase();
       return (
-        candidate.name.toLowerCase().includes(lowerSearch) ||
-        candidate.email.toLowerCase().includes(lowerSearch) ||
-        candidate.position.toLowerCase().includes(lowerSearch)
+        candidate.name?.toLowerCase().includes(lowerSearch) ||
+        candidate.email?.toLowerCase().includes(lowerSearch) ||
+        candidate.position?.toLowerCase().includes(lowerSearch)
       );
     }
     return true;
   });
+  
+  const tableData = filteredCandidates.map((candidate, index) => ({
+    id: candidate._id || index,  // Make sure each row has unique ID
+    "Sr no.": index + 1,
+    "Name": candidate?.name || '',
+    "Email": candidate?.email || '',
+    "Phone": candidate?.phone || '',
+    "Position": candidate?.position || '',
+    "Status": candidate?.status || 'New',
+    "Experience": candidate?.experience || '',
+    // "Action": true
+  }));
 
-  const handleSaveCandidate = (newCandidate) => {
-    const newId = String(candidates.length + 1).padStart(2, '0');
-    setCandidates(prev => [...prev, { id: newId, ...newCandidate }]);
+  const handleSaveCandidate = async (newCandidate) => {
+    const formData = new FormData();
+    
+    Object.keys(newCandidate).forEach(key => {
+      if (key === 'resume' && newCandidate[key] instanceof File) {
+        formData.append(key, newCandidate[key]);
+      } else if (key !== 'declaration') {
+        formData.append(key, newCandidate[key]);
+      }
+    });
+  
+    try {
+      await dispatch(addCandidate(formData)).unwrap();
+      setIsModalOpen(false);
+      dispatch(getAllCandidates()); // Refresh the list after successful addition
+    } catch (error) {
+      console.error("Failed to add candidate:", error);
+    }
   };
 
-  const handleStatusChange = (candidateId, newStatus) => {
-    setCandidates(prev => 
-      prev.map(candidate => 
-        candidate.id === candidateId 
-          ? { ...candidate, status: newStatus } 
-          : candidate
-      )
-    );
+  const handleStatusChange = async (candidateId, newStatus) => {
+    try {
+      // Dispatch the status update action
+      const result = await dispatch(updateCandidateStatus({ 
+        id: candidateId, 
+        status: newStatus 
+      })).unwrap();
+      
+      if (result) {
+        dispatch(getAllCandidates());
+      }
+      
+    } catch (error) {
+      console.error("Status update failed:", error);
+    }
   };
 
   const actionItems = [
@@ -74,7 +110,8 @@ const [editingCandidate, setEditingCandidate] = useState({});
       label: "Delete Candidate",
       icon: Trash2,
       handler: (id) => {
-        setCandidates(prev => prev.filter(candidate => candidate.id !== id));
+        console.log("delete handler:",id)
+        // setCandidates(prev => prev.filter(candidate => candidate.id !== id));
       }
     }
   ];
@@ -85,6 +122,9 @@ const [editingCandidate, setEditingCandidate] = useState({});
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+if(loading) return <div>Loading......</div>
+   
 
   return (
     <div className={styles.container}>
@@ -118,8 +158,8 @@ const [editingCandidate, setEditingCandidate] = useState({});
       />
       
       <DataTable
-        columns={["Sr no.", "Name", "Email", "Phone", "Position", "Status", "Experience", "Action"]}
-        data={filteredCandidates.map(candidate => ({
+        columns={["Sr no.", "Name", "Email", "Phone", "Position", "Status", "Experience","Action"]}
+        data={tableData.map(candidate => ({
           ...candidate,
           actions: true
         }))}
@@ -136,7 +176,7 @@ const [editingCandidate, setEditingCandidate] = useState({});
   mode={modalMode} // "add" or "edit"
   initialData={editingCandidate} // data when in edit mode
   fields={[
-    { name: 'fullName', label: 'Full Name', type: 'text', required: true },
+    { name: 'name', label: 'Full Name', type: 'text', required: true },
     { name: 'email', label: 'Email', type: 'email', required: true },
     { name: 'phone', label: 'Phone Number', type: 'tel', required: true },
     { 

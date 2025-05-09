@@ -1,6 +1,5 @@
 import Employee from '../models/Employee.js';
 import { StatusCodes } from 'http-status-codes';
-import { cloudinary } from '../config/cloudinary.js';
 import fs from 'fs';
 
 export const createEmployee = async (req, res) => {
@@ -60,7 +59,7 @@ export const updateEmployee = async (req, res) => {
   const { id } = req.params;
   
   if (req.file) {
-    const result = await cloudinary.uploader.upload(req.file.path, {
+    const result = await uploadToCloudinary(req.file.path, {
       folder: 'hrms/employees',
     });
     req.body.photo = result.secure_url;

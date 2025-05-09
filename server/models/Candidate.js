@@ -28,9 +28,7 @@ const CandidateSchema = new mongoose.Schema({
   feedback: {
     type: String,trim: true,
   },
-  createdBy: {
-    type: mongoose.Schema.ObjectId,ref: 'User',required: true,
-  },
+ 
  
 },{ timestamps: true });
 

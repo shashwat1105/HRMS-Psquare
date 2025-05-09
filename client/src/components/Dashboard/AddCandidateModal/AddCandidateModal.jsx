@@ -65,6 +65,25 @@ const ModalForm = ({
   }, [isOpen, mode, fields.length, JSON.stringify(initialData)]);
   
 
+  useEffect(() => {
+    const isValid = fields.every(field => {
+      const value = formData[field.name];
+      if (field.required) {
+        if (field.type === 'checkbox') {
+          return value === true;
+        }
+        if (field.type === 'file') {
+          return value instanceof File;
+        }
+        return value !== '';
+      }
+      return true;
+    });
+  
+    setIsFormValid(isValid);
+  }, [formData, fields]);
+  
+
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({

@@ -3,10 +3,13 @@ import instance from "../../utils/axios";
 import toast from "react-hot-toast";
 
 
-const addCandidate=createAsyncThunk('candidate/add',async(userData,{rejectWithValue})=>{
+export const addCandidate=createAsyncThunk('candidate/add',async(userData,{rejectWithValue})=>{
     try {
         const response=await instance.post('/candidate/add', userData,{
-            withCredentials:true,
+            withCredentials:true,   
+            headers: {
+                'Content-Type': 'multipart/form-data',
+              },
         });
         if(!response){
             throw new Error('Candidate creation failed!');
@@ -118,7 +121,7 @@ const candidateSlice=createSlice({
         .addCase(addCandidate.fulfilled,(state,action)=>{
             state.loading=false;
             state.success=true;
-            state.candidates=action.payload.data;
+            state.candidates = [action.payload.data, ...state.candidates];
             toast.success(action.payload.message || "Candidate added successfully!");
         })
         .addCase(addCandidate.rejected,(state,action)=>{

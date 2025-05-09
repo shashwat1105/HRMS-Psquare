@@ -1,16 +1,15 @@
+import uploadToCloudinary from '../config/cloudinary.js';
 import Candidate from '../models/Candidate.js';
 import fs from 'fs';
 
 export const createCandidate = async (req, res) => {
 
     try{
-
+// const { userId } = req.user;
+// console.log("userId",userId);
 const { name, email, phone, position, experience } = req.body;
-
-const { userId } = req.user;
-if(!name || !email || !phone || !position || !experience) {
-
-    return res.status(400).json({ message: "Please provide all required fields" });
+if (!name || !email || !phone || !position || !experience) {
+  return res.status(400).json({ message: "Please provide all required fields" });
 }
 
 let resume='';
@@ -28,14 +27,14 @@ const newCandidate = await Candidate.create({
     position,
     experience,
     resume,
-    createdBy: userId,
+    // createdBy: userId,
 })
-
+  
 await newCandidate.save();
 
 return res.status(201).json({ message: "Candidate created successfully", candidate: newCandidate });
 
-    }catch(error){
+    }catch(err){
         console.log("Server error occured!",err);
         return res.status(500).json({message:"Srever error occured",err})
     }
@@ -47,14 +46,13 @@ export const getAllCandidates = async (req, res) => {
   try{
 
     const allusers = await Candidate.find({});
-  
+       
   if (!allusers) {
-    return res.status(400).json({ message: 'No candidates found',});
+    return res.status(400).json({ message: 'No candidates found!',});
   }
   
   res.status(200).json({message: 'All candidates fetched successfully', count: allusers.length, data: allusers});
-  }catch
-(error){
+  }catch(err){
     console.log("Server error occured!",err);
     return res.status(500).json({message:"Srever error occured",err})
   }
