@@ -1,34 +1,16 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, FileText, ChevronDown } from 'lucide-react';
+import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-hot-toast';
 import styles from './LeavesForm.module.css';
+import { updateLeaveStatus } from '../../../store/slices/leaveSlice';
 
-export default function LeaveForm() {
-  const [currentMonth, setCurrentMonth] = useState(8); // September (0-indexed)
-  const [currentYear, setCurrentYear] = useState(2024);
+export default function LeaveForm({ leaveRequests, onStatusChange }) {
+  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [openDropdownId, setOpenDropdownId] = useState(null);
   const [statusOptions] = useState(['Approved', 'Pending', 'Rejected']);
-  
-  // Leave data
-  const [leaveRequests, setLeaveRequests] = useState([
-    {
-      id: 1,
-      name: 'Jane Cooper',
-      position: 'Full Time Designer',
-      date: '10/09/24',
-      reason: 'Visiting House',
-      status: 'Approved',
-      hasDocuments: true,
-    },
-    {
-      id: 2,
-      name: 'Cody Fisher',
-      position: 'Senior Backend Developer',
-      date: '8/09/24',
-      reason: 'Visiting House',
-      status: 'Approved',
-      hasDocuments: false,
-    },
-  ]);
+  const dispatch = useDispatch();
 
   // Month names for display
   const monthNames = [
@@ -74,9 +56,15 @@ export default function LeaveForm() {
   // Check if a day has any leave approvals
   const hasLeaveOnDate = (day) => {
     return leaveRequests.some(leave => {
+      if (!leave.date) return false;
+      
+      // Parse the date based on your format (assuming DD/MM/YY)
       const [leaveDay, leaveMonth, leaveYear] = leave.date.split('/').map(Number);
-      return leaveDay === day && (leaveMonth - 1) === currentMonth && 
-             (leaveYear + 2000) === currentYear;
+      return (
+        leaveDay === day && 
+        (leaveMonth - 1) === currentMonth && 
+        (leaveYear + 2000) === currentYear
+      );
     });
   };
   
@@ -133,13 +121,27 @@ export default function LeaveForm() {
   };
   
   // Change status of a leave request
-  const changeStatus = (id, newStatus) => {
-    setLeaveRequests(prevRequests => 
-      prevRequests.map(request => 
-        request.id === id ? {...request, status: newStatus} : request
-      )
-    );
-    setOpenDropdownId(null);
+  const handleStatusChange = async (id, newStatus) => {
+    try {
+      await dispatch(updateLeaveStatus({ id, status: newStatus })).unwrap();
+      toast.success('Leave status updated successfully');
+      onStatusChange(id, newStatus); // Notify parent component
+      setOpenDropdownId(null);
+    } catch (error) {
+      toast.error(error.message || 'Failed to update leave status');
+    }
+  };
+
+  // Format date for display (DD/MM/YY)
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return dateString; // Return original if invalid
+    
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear().toString().slice(-2);
+    return `${day}/${month}/${year}`;
   };
 
   return (
@@ -149,7 +151,7 @@ export default function LeaveForm() {
           <h2>Applied Leaves</h2>
         </div>
         
-        <div className={styles.tableHeader}>
+        <div className={styles.tableHeader} style={{ backgroundColor: '#6b46c1' }}>
           <div className={`${styles.column} ${styles.profileColumn}`}>Profile</div>
           <div className={`${styles.column} ${styles.nameColumn}`}>Name</div>
           <div className={`${styles.column} ${styles.dateColumn}`}>Date</div>
@@ -162,30 +164,35 @@ export default function LeaveForm() {
           {leaveRequests.map((leave) => (
             <div key={leave.id} className={styles.leaveRow}>
               <div className={`${styles.column} ${styles.profileColumn}`}>
-                <div className={styles.avatar}>{leave.name.charAt(0)}</div>
+                <div className={styles.avatar}>
+                  {leave.employee?.name?.charAt(0) || '?'}
+                </div>
               </div>
               <div className={`${styles.column} ${styles.nameColumn}`}>
-                <div className={styles.employeeName}>{leave.name}</div>
-                <div className={styles.employeePosition}>{leave.position}</div>
+                <div className={styles.employeeName}>{leave.employee?.name || 'Unknown'}</div>
+                <div className={styles.employeePosition}>{leave.designation || 'N/A'}</div>
               </div>
-              <div className={`${styles.column} ${styles.dateColumn}`}>{leave.date}</div>
-              <div className={`${styles.column} ${styles.reasonColumn}`}>{leave.reason}</div>
+              <div className={`${styles.column} ${styles.dateColumn}`}>
+                {formatDate(leave.date)}
+              </div>
+              <div className={`${styles.column} ${styles.reasonColumn}`}>{leave.reason || 'N/A'}</div>
               <div className={`${styles.column} ${styles.statusColumn}`}>
                 <div className={styles.dropdownContainer}>
                   <button 
-                    className={`${styles.statusButton} ${styles[leave.status.toLowerCase()]}`}
-                    onClick={() => toggleDropdown(leave.id)}
+                    className={`${styles.statusButton} ${styles[leave.status?.toLowerCase()] || styles.pending}`}
+                    onClick={() => toggleDropdown(leave._id)}
                   >
-                    {leave.status} {openDropdownId === leave.id ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+                    {leave.status || 'Pending'} 
+                    {openDropdownId === leave._id ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
                   </button>
                   
-                  {openDropdownId === leave.id && (
+                  {openDropdownId === leave._id && (
                     <div className={styles.statusDropdown}>
                       {statusOptions.map((status) => (
                         <div 
                           key={status} 
                           className={`${styles.dropdownItem} ${styles[status.toLowerCase()]}`}
-                          onClick={() => changeStatus(leave.id, status)}
+                          onClick={() => handleStatusChange(leave._id, status)}
                         >
                           {status}
                         </div>
@@ -195,8 +202,13 @@ export default function LeaveForm() {
                 </div>
               </div>
               <div className={`${styles.column} ${styles.docsColumn}`}>
-                {leave.hasDocuments && (
-                  <a href="#" className={styles.docLink}>
+                {leave.docs && (
+                  <a 
+                    href={leave.docs} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className={styles.docLink}
+                  >
                     <FileText size={20} className={styles.docIcon} />
                   </a>
                 )}
@@ -223,7 +235,7 @@ export default function LeaveForm() {
         
         <table className={styles.calendar}>
           <thead>
-            <tr>
+            <tr style={{ backgroundColor: '#6b46c1', color: 'white' }}>
               <th>S</th>
               <th>M</th>
               <th>T</th>
@@ -244,13 +256,15 @@ export default function LeaveForm() {
           {leaveRequests
             .filter(leave => leave.status === 'Approved')
             .map((leave) => (
-              <div key={leave.id} className={styles.approvedLeaveItem}>
-                <div className={styles.avatar}>{leave.name.charAt(0)}</div>
-                <div className={styles.employeeInfo}>
-                  <div className={styles.employeeName}>{leave.name}</div>
-                  <div className={styles.employeePosition}>{leave.position}</div>
+              <div key={leave._id} className={styles.approvedLeaveItem}>
+                <div className={styles.avatar}>
+                  {leave.employee?.name?.charAt(0) || '?'}
                 </div>
-                <div className={styles.leaveDate}>{leave.date}</div>
+                <div className={styles.employeeInfo}>
+                  <div className={styles.employeeName}>{leave.employee?.name || 'Unknown'}</div>
+                  <div className={styles.employeePosition}>{leave.designation || 'N/A'}</div>
+                </div>
+                <div className={styles.leaveDate}>{formatDate(leave.date)}</div>
               </div>
             ))
           }

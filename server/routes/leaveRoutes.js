@@ -12,9 +12,14 @@ import upload from '../config/multer.js';
 const router = express.Router();
 
 router.post('/create',upload.fields([{name:'docs',maxCount:1}]),createLeave);
- router.get('/getAll', getAllLeaves);
+
+router.get('/getAll', getAllLeaves);
+
+router.patch('/update/:id', updateLeaveStatus);
+
 
 router.get('/calendar',getCalendarLeaves)
+
 
 // router
 //   .route('/:id/status')

@@ -42,7 +42,7 @@ app.use('/auth', authRoutes);
 app.use('/candidate', candidateRoutes);
 app.use('/employee', employeeRoutes);
 app.use('/attendance', attendanceRoutes);
-app.use('/leaves', leaveRoutes);
+app.use('/leave', leaveRoutes);
 
 // Error handling middleware
 app.use(errorHandler);

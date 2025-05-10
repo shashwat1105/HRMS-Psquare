@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Calendar, Upload } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Calendar, Upload, Search, X } from 'lucide-react';
 import styles from './AddLeave.module.css';
 
 const AddLeaveModal = ({ isOpen, onClose, employees }) => {
@@ -13,10 +13,26 @@ const AddLeaveModal = ({ isOpen, onClose, employees }) => {
     reason: '',
     document: null
   });
+  const [documentName, setDocumentName] = useState('');
   const [isFormValid, setIsFormValid] = useState(false);
+  const dropdownRef = useRef(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   useEffect(() => {
-    if (searchTerm.trim() !== '') {
+    if (searchTerm.trim() !== '' && !selectedEmployee) {
       const filtered = employees.filter(emp => 
         emp.name.toLowerCase().includes(searchTerm.toLowerCase())
       );
@@ -26,16 +42,14 @@ const AddLeaveModal = ({ isOpen, onClose, employees }) => {
       setFilteredEmployees([]);
       setShowDropdown(false);
     }
-  }, [searchTerm, employees]);
+  }, [searchTerm, employees, selectedEmployee]);
 
   useEffect(() => {
-    // Check if all mandatory fields are filled
     const isValid = 
       selectedEmployee !== null && 
       formData.designation.trim() !== '' && 
       formData.leaveDate.trim() !== '' && 
       formData.reason.trim() !== '';
-    
     setIsFormValid(isValid);
   }, [selectedEmployee, formData]);
 
@@ -51,6 +65,10 @@ const AddLeaveModal = ({ isOpen, onClose, employees }) => {
     setSelectedEmployee(employee);
     setSearchTerm(employee.name);
     setShowDropdown(false);
+    setFormData(prev => ({
+      ...prev,
+      designation: employee.designation || ''
+    }));
   };
 
   const handleSearchChange = (e) => {
@@ -67,7 +85,16 @@ const AddLeaveModal = ({ isOpen, onClose, employees }) => {
         ...formData,
         document: file
       });
+      setDocumentName(file.name);
     }
+  };
+
+  const handleClearDocument = () => {
+    setFormData({
+      ...formData,
+      document: null
+    });
+    setDocumentName('');
   };
 
   const handleSubmit = () => {
@@ -77,7 +104,6 @@ const AddLeaveModal = ({ isOpen, onClose, employees }) => {
         ...formData
       };
       console.log('Submitting leave data:', leaveData);
-      // Add your submission logic here
       onClose();
     }
   };
@@ -89,80 +115,108 @@ const AddLeaveModal = ({ isOpen, onClose, employees }) => {
       <div className={styles.modalContent}>
         <div className={styles.modalHeader}>
           <h2>Add New Leave</h2>
-          <button className={styles.closeButton} onClick={onClose}>×</button>
+          <button className={styles.closeButton} onClick={onClose}>
+            <X size={20} />
+          </button>
         </div>
         
         <div className={styles.modalBody}>
-          {/* Employee Search */}
-          <div className={styles.inputContainer}>
-            <div className={styles.searchContainer}>
+          <div className={styles.formGrid}>
+            {/* Employee Search */}
+            <div className={styles.inputContainer}>
+              <div className={styles.searchContainer} ref={dropdownRef}>
+                <input
+                  type="text"
+                  placeholder="Search Employee Name"
+                  value={searchTerm}
+                  onChange={handleSearchChange}
+                  className={styles.inputField}
+                  onClick={() => {
+                    if (!selectedEmployee) {
+                      setShowDropdown(true);
+                    }
+                  }}
+                />
+                <Search className={styles.searchIcon} size={16} />
+                
+                {showDropdown && filteredEmployees.length > 0 && (
+                  <div className={styles.dropdownList}>
+                    {filteredEmployees.map((emp) => (
+                      <div 
+                        key={emp.id} 
+                        className={styles.dropdownItem}
+                        onClick={() => handleEmployeeSelect(emp)}
+                      >
+                        {emp.name}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Designation */}
+            <div className={styles.inputContainer}>
               <input
                 type="text"
-                placeholder="Search Employee Name"
-                value={searchTerm}
-                onChange={handleSearchChange}
+                name="designation"
+                placeholder="Designation*"
+                value={formData.designation}
+                onChange={handleInputChange}
                 className={styles.inputField}
+                required
               />
-              <span className={styles.searchIcon}>🔍</span>
-              
-              {showDropdown && filteredEmployees.length > 0 && (
-                <div className={styles.dropdownList}>
-                  {filteredEmployees.map((emp) => (
-                    <div 
-                      key={emp.id} 
-                      className={styles.dropdownItem}
-                      onClick={() => handleEmployeeSelect(emp)}
-                    >
-                      {emp.name}
+            </div>
+
+            {/* Leave Date */}
+            <div className={styles.inputContainer}>
+              <input
+                type="date"
+                name="leaveDate"
+                placeholder="Leave Date*"
+                value={formData.leaveDate}
+                onChange={handleInputChange}
+                className={styles.inputField}
+                required
+              />
+              {/* <Calendar className={styles.fieldIcon} size={16} /> */}
+            </div>
+
+            {/* Document Upload */}
+            <div className={styles.inputContainer}>
+              <div className={styles.uploadContainer}>
+                <label className={styles.uploadField}>
+                  {documentName ? (
+                    <div className={styles.documentPreview}>
+                      <span className={styles.documentName}>{documentName}</span>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleClearDocument();
+                        }}
+                        className={styles.clearDocument}
+                        aria-label="Remove document"
+                      >
+                        <X size={14} />
+                      </button>
                     </div>
-                  ))}
-                </div>
-              )}
+                  ) : (
+                    <span>Upload Document</span>
+                  )}
+                  <input
+                    type="file"
+                    name="document"
+                    onChange={handleFileChange}
+                    className={styles.fileInput}
+                  />
+                  <Upload className={styles.uploadIcon} size={16} />
+                </label>
+              </div>
             </div>
           </div>
 
-          {/* Designation */}
-          <div className={styles.inputContainer}>
-            <input
-              type="text"
-              name="designation"
-              placeholder="Designation*"
-              value={formData.designation}
-              onChange={handleInputChange}
-              className={styles.inputField}
-              required
-            />
-          </div>
-
-          {/* Leave Date */}
-          <div className={styles.inputContainer}>
-            <input
-              type="date"
-              name="leaveDate"
-              placeholder="Leave Date*"
-              value={formData.leaveDate}
-              onChange={handleInputChange}
-              className={styles.inputField}
-              required
-            />
-            <Calendar className={styles.fieldIcon} size={20} />
-          </div>
-
-          {/* Document Upload */}
-          <div className={styles.inputContainer}>
-            <label className={styles.uploadField}>
-              <span>Documents</span>
-              <input
-                type="file"
-                name="document"
-                onChange={handleFileChange}
-                className={styles.fileInput}
-              />
-              <Upload className={styles.uploadIcon} size={20} />
-            </label>
-          </div>
-
-          {/* Reason */}
+          {/* Reason - Full Width */}
           <div className={styles.inputContainer}>
             <input
               type="text"
