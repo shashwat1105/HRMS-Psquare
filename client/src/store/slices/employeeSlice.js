@@ -1,27 +1,28 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import instance from "../../utils/axios";
+import toast from "react-hot-toast";
 
-export const addEmployee=createAsyncThunk('employee/add',async(userData,{rejectWithValue})=>{
+
+export const addEmployee = createAsyncThunk('employee/add', async (userData, { rejectWithValue }) => {
     try {
-        const response=await instance.post('/employee/add', userData,{
-            withCredentials:true,   
-            headers: {
-                'Content-Type': 'multipart/form-data',
-              },
-        });
-        if(!response){
-            throw new Error('Employee creation failed!');
-        }
-        return response.data;
+      const response = await instance.post('/employee/add', userData, {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      
+      if (!response) {
+        throw new Error('Employee creation failed!');
+      }
+      return response.data;
     } catch (err) {
-        if (err.response) {
-            const message = err.response.data.message || "Employee creation failed!";
-            return rejectWithValue(message);
-          }
-          return rejectWithValue("Employee creation failed!");
+      if (err.response) {
+        return rejectWithValue(err.response.data.message || "Employee creation failed!");
+      }
+      return rejectWithValue("Employee creation failed!");
     }
-    }
-)
+  });
 export const getAllEmployees=createAsyncThunk('employee/getAll',async(_, {rejectWithValue})=>{
     try {
         const response=await instance.get('/employee/getAll',{
@@ -96,7 +97,7 @@ export const deleteEmployee = createAsyncThunk(
 const employeeSlice=createSlice({
     name:'employee',
     initialState:{
-        employee:null,
+        employees:[],
         loading:false,
         error:null,
     },
@@ -111,8 +112,9 @@ const employeeSlice=createSlice({
         })
         .addCase(addEmployee.fulfilled,(state,action)=>{
             state.loading=false;
-            state.employee=action.payload.data;
+            state.employees = [action.payload.data, ...state.employees];
             state.error=null;
+
         })
         .addCase(addEmployee.rejected,(state,action)=>{
             state.loading=false;
@@ -124,8 +126,9 @@ const employeeSlice=createSlice({
         })
         .addCase(getAllEmployees.fulfilled,(state,action)=>{
             state.loading=false;
-            state.employee=action.payload.data;
+            state.employees=action.payload.data;
             state.error=null;
+            toast.success(action.payload.message || "Employees fetched successfully!");
         })
         .addCase(getAllEmployees.rejected,(state,action)=>{
             state.loading=false;
@@ -135,9 +138,9 @@ const employeeSlice=createSlice({
             state.loading=true;
             state.error=null;
         })
-        .addCase(updateEmployee.fulfilled,(state,action)=>{
+        .addCase(updateEmployee.fulfilled,(state)=>{
             state.loading=false;
-            state.employee=action.payload.data;
+            // state.employees=action.payload.data;
             state.error=null;
         })
         .addCase(updateEmployee.rejected,(state,action)=>{
@@ -148,9 +151,9 @@ const employeeSlice=createSlice({
             state.loading=true;
             state.error=null;
         })
-        .addCase(deleteEmployee.fulfilled,(state,action)=>{
+        .addCase(deleteEmployee.fulfilled,(state)=>{
             state.loading=false;
-            state.employee=action.payload.data;
+            // state.employees=action.payload.data;
             state.error=null;
         })
         .addCase(deleteEmployee.rejected,(state,action)=>{

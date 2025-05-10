@@ -1,11 +1,18 @@
-import { useState } from "react";
-import { MoreVertical, ChevronDown, Mail, Bell, User, Trash2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Filter, Trash2, User } from "lucide-react";
 import styles from "./Employees.module.css";
 import Navbar from "../Candidates/comps/NavBar";
 import FilterOptions from "../Candidates/comps/FilterOptions";
 import DataTable from "../Candidates/comps/DataTable";
 import ModalForm from "../AddCandidateModal/AddCandidateModal";
- 
+import { 
+  addEmployee, 
+  getAllEmployees, 
+  updateEmployee, 
+  deleteEmployee 
+} from "../../../store/slices/employeeSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-hot-toast";
 
 export default function EmployeeManagement() {
   const [isMobile, setIsMobile] = useState(false);
@@ -13,111 +20,146 @@ export default function EmployeeManagement() {
   const [searchTerm, setSearchTerm] = useState("");
   const [positionFilter, setPositionFilter] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalMode, setModalMode] = useState("edit");
+  const [modalMode, setModalMode] = useState("add");
   const [editingEmployee, setEditingEmployee] = useState({});
+  const dispatch = useDispatch();
+  
+  const { employees = [] } = useSelector((state) => state.employee) || {};
 
   const positionOptions = ["Intern", "Junior", "Full Time", "Senior", "Team Lead"];
+  const departmentOptions = ['Designer', 'Backend Development', 'Human Resource', 'Frontend Development', 'Marketing'];
 
-  const [employees, setEmployees] = useState([
-    {
-      id: 1,
-      name: 'Jane Copper',
-      email: 'jane.copper@example.com',
-      phone: '(704) 555-0127',
-      position: 'Intern',
-      department: 'Designer',
-      joinDate: '10/06/13',
-      avatar: '/api/placeholder/32/32'
-    },
-    {
-      id: 2,
-      name: 'Arlene McCoy',
-      email: 'arlene.mccoy@example.com',
-      phone: '(302) 555-0107',
-      position: 'Full Time',
-      department: 'Designer',
-      joinDate: '11/07/16',
-      avatar: '/api/placeholder/32/32'
-    },
-    {
-      id: 3,
-      name: 'Cody Fisher',
-      email: 'deanna.curtis@example.com',
-      phone: '(252) 555-0126',
-      position: 'Senior',
-      department: 'Backend Development',
-      joinDate: '08/15/17',
-      avatar: '/api/placeholder/32/32'
-    },
-    {
-      id: 4,
-      name: 'Janney Wilson',
-      email: 'janney.wilson@example.com',
-      phone: '(252) 555-0126',
-      position: 'Junior',
-      department: 'Backend Development',
-      joinDate: '12/04/17',
-      avatar: '/api/placeholder/32/32'
-    },
-    {
-      id: 5,
-      name: 'Leslie Alexander',
-      email: 'willie.jennings@example.com',
-      phone: '(207) 555-0119',
-      position: 'Team Lead',
-      department: 'Human Resource',
-      joinDate: '05/30/14',
-      avatar: '/api/placeholder/32/32'
+  useEffect(() => {
+    dispatch(getAllEmployees());
+  }, [dispatch]);
+
+  const filteredEmployees = (employees || []).filter(employee => {
+    if (!employee) return false;
+    
+    // Check position filter
+    if (positionFilter && employee.position !== positionFilter) {
+      return false;
     }
-  ]);
-
-  const filteredEmployees = employees.filter(employee => {
-    if (positionFilter && employee.position !== positionFilter) return false;
+    
+    // Check search term
     if (searchTerm) {
-      const lowerSearch = searchTerm.toLowerCase();
+      const searchLower = searchTerm.toLowerCase();
       return (
-        employee.name.toLowerCase().includes(lowerSearch) ||
-        employee.email.toLowerCase().includes(lowerSearch) ||
-        employee.department.toLowerCase().includes(lowerSearch)
+        (employee.name?.toLowerCase().includes(searchLower)) ||
+        (employee.email?.toLowerCase().includes(searchLower)) ||
+        (employee.department?.toLowerCase().includes(searchLower))
       );
     }
+    
     return true;
   });
 
-  const handleSaveEmployee = (newEmployee) => {
-    if (modalMode === 'add') {
-      const newId = Math.max(...employees.map(e => e.id)) + 1;
-      setEmployees(prev => [...prev, { id: newId, ...newEmployee }]);
-    } else {
-      setEmployees(prev => 
-        prev.map(employee => 
-          employee.id === editingEmployee.id 
-            ? { ...employee, ...newEmployee } 
-            : employee
-        )
-      );
+  const tableData = filteredEmployees.map((employee, index) => ({
+    id: employee._id || index,
+    "Sr no.": index + 1,
+    "Profile": employee.photo ? (
+      <img 
+        src={employee.photo} 
+        alt={employee.name}
+        className={styles.employeeAvatar}
+      />
+    ) : (
+      <div className={styles.avatarPlaceholder}>
+        {employee.name?.charAt(0).toUpperCase()}
+      </div>
+    ),
+    "Employee Name": employee?.name || '',
+    "Email Address": employee?.email || '',
+    "Phone Number": employee?.phone || '',
+    "Position": employee?.position || '',
+    "Department": employee?.department || '',
+    "Date of Joining": employee?.joiningDate 
+      ? new Date(employee.joiningDate).toLocaleDateString() 
+      : '',
+  }));
+
+  const handleSaveEmployee = async (newEmployee) => {
+    const formData = new FormData();
+    
+    Object.keys(newEmployee).forEach(key => {
+      if (key === 'avatar' && newEmployee[key] instanceof File) {
+        formData.append('photo', newEmployee[key]);
+      } else if (key !== 'declaration') {
+        formData.append(key, newEmployee[key]);
+      }
+    });
+
+    try {
+      if (modalMode === "add") {
+        await dispatch(addEmployee(formData)).unwrap();
+        toast.success("Employee added successfully");
+      } else {
+        await dispatch(updateEmployee({ 
+          id: editingEmployee._id, 
+          userData: formData 
+        })).unwrap();
+        toast.success("Employee updated successfully");
+      }
+      setIsModalOpen(false);
+      dispatch(getAllEmployees());
+    } catch (error) {
+      toast.error(error.message || "Operation failed");
+    }
+  };
+
+  const handleDeleteEmployee = (id) => {
+    if (window.confirm('Are you sure you want to delete this employee?')) {
+      dispatch(deleteEmployee(id))
+        .unwrap()
+        .then(() => {
+          toast.success("Employee deleted successfully");
+          dispatch(getAllEmployees());
+        })
+        .catch(err => toast.error(err.message || "Delete failed"));
     }
   };
 
   const actionItems = [
     {
-        label: "Edit Employee",
-        icon: User,
-        handler: (id) => {
-          const employeeToEdit = employees.find(e => e.id === id);
-          setEditingEmployee({...employeeToEdit});
-          setModalMode("edit");
-          setIsModalOpen(true);
-        }
-      },
+      label: "Edit Employee",
+      icon: User,
+      handler: (id) => { handleEditEmployee(id);}
+    },
     {
-      label: "Delete",
+      label: "Delete Employee",
       icon: Trash2,
-      handler: (id) => {
-        setEmployees(prev => prev.filter(employee => employee.id !== id));
-      }
+      handler:(id)=> handleDeleteEmployee(id),
+      danger: true
     }
   ];
+
+  const resetFilters = () => {
+    setPositionFilter("");
+    setSearchTerm("");
+    setIsFilterOpen(false); // Also close the filter panel on reset
+  };
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const handleEditEmployee = (id) => {
+    const employee = employees.find(e => e._id === id);
+    setEditingEmployee({
+      ...employee,
+      joiningDate: employee.joiningDate ? formatDateForInput(employee.joiningDate) : ''
+    });
+    setModalMode("edit");
+    setIsModalOpen(true);
+  };
+
+  const formatDateForInput = (dateString) => {
+    const date = new Date(dateString);
+    return date.toISOString().split('T')[0];
+  };
 
   return (
     <div className={styles.container}>
@@ -136,42 +178,27 @@ export default function EmployeeManagement() {
       )}
       
       <FilterOptions
-        isMobile={isMobile}
-        isFilterOpen={isFilterOpen}
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        positionFilter={positionFilter}
-        setPositionFilter={setPositionFilter}
-        positionOptions={positionOptions}
-        addButtonText="Add Employee"
-        onAddClick={() => {
-          setModalMode("add");
-          setIsModalOpen(true);
-        }}
-        hideStatusFilter={true}
-      />
+  isMobile={isMobile}
+  isFilterOpen={isFilterOpen}
+  searchTerm={searchTerm}
+  setSearchTerm={setSearchTerm}
+  positionFilter={positionFilter}
+  setPositionFilter={setPositionFilter}
+  positionOptions={positionOptions}
+  addButtonText="Add Employee"
+  onAddClick={() => {
+    setEditingEmployee({});
+    setModalMode("add");
+    setIsModalOpen(true);
+  }}
+  onReset={resetFilters}
+  hideStatusFilter={true}
+  hideDepartmentFilter={true}
+/>
       
       <DataTable
-        columns={["Sr. no","Profile", "Employee Name", "Email Address", "Phone Number", "Position", "Department", "Date of Joining", "Action"]}
-        data={filteredEmployees.map(employee => ({
-          id: employee.id,
-          profile: (
-            <div className={styles.avatarCell}>
-              <img 
-                src={employee.avatar} 
-                alt={employee.name} 
-                className={styles.employeeAvatar} 
-              />
-            </div>
-          ),
-          name: employee.name,
-          email: employee.email,
-          phone: employee.phone,
-          position: employee.position,
-          department: employee.department,
-          joinDate: employee.joinDate,
-          actions: true
-        }))}
+        columns={["Sr no.", "Profile", "Employee Name", "Email Address", "Phone Number", "Position", "Department", "Date of Joining", "Action"]}
+        data={tableData}
         actionItems={actionItems}
       />
 
@@ -197,16 +224,16 @@ export default function EmployeeManagement() {
             name: 'department', 
             label: 'Department', 
             type: 'select',
-            options: ['Designer', 'Backend Development', 'Human Resource', 'Frontend Development', 'Marketing'],
+            options: departmentOptions,
             required: true 
           },
-          { name: 'joinDate', label: 'Date of Joining', type: 'date', required: true },
+          { name: 'joiningDate', label: 'Date of Joining', type: 'date', required: true },
           { 
             name: 'avatar', 
-            label: 'Profile Picture', 
+            label: 'Profile Photo', 
             type: 'file', 
             accept: 'image/*',
-            required: modalMode === 'edit'
+            required: modalMode === 'add'
           }
         ]}
       />

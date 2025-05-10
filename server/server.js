@@ -40,7 +40,7 @@ app.use(limiter);
 
 app.use('/auth', authRoutes);
 app.use('/candidate', candidateRoutes);
-app.use('/employees', employeeRoutes);
+app.use('/employee', employeeRoutes);
 // app.use('/attendance', attendanceRoutes);
 // app.use('/leaves', leaveRoutes);
 

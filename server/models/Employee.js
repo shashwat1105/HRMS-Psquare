@@ -20,7 +20,7 @@ type: String, required: true, trim: true,
     enum: ['Designer', 'Backend Development', 'Human Resource', 'Frontend Development', 'Marketing'],
     default: 'Designer',
 },
-  dateOfJoining: {
+  joiningDate: {
     type: Date,required: true,
   },
   photo: {
