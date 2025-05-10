@@ -220,3 +220,35 @@
   .inputField, .uploadField {
     height: 45px;
   }
+
+  .inputLabel {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #4a5568;
+  }
+  
+  .employeeOption {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .employeeName {
+    font-weight: 500;
+  }
+  
+  .employeePosition {
+    font-size: 12px;
+    color: #718096;
+  }
+  
+  .reasonInput {
+    min-height: 80px;
+    resize: vertical;
+  }
+  
+  .saveButton:disabled {
+    background-color: #cbd5e0;
+    cursor: not-allowed;
+  }

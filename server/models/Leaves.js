@@ -12,13 +12,12 @@ const LeaveSchema = new mongoose.Schema({
   },
  
   status: {
-    type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending',
+    type: String, enum: ['Pending', 'Approved', 'Rejected'], default: 'Pending',
   },
-  docs: [
-    {
+  docs: {
    type: String,required: true,trim: true,
     },
-  ],
+  
   
 },{timestamps: true});
 

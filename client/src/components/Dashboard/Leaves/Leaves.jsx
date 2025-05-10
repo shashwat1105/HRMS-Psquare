@@ -136,12 +136,10 @@ export default function LeavesPage() {
   onStatusChange={handleStatusChange} 
 />
 
-      <AddLeaveModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSave={handleSaveLeave}
-        employees={[]} // You might want to fetch employees from your API
-      />
+<AddLeaveModal
+  isOpen={isModalOpen}
+  onClose={() => setIsModalOpen(false)}
+/>
     </div>
   );
 }

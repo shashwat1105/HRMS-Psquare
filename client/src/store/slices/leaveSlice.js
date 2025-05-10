@@ -30,7 +30,7 @@ export const getAllLeaves=createAsyncThunk('leave/getAllLeaves',async(_, {reject
 
 export const updateLeaveStatus=createAsyncThunk('leave/updateLeaveStatus',async({id,status},{rejectWithValue})=>{
     try{
-        const response=await instance.patch(`/leave/update/${id}`,status,{
+        const response=await instance.patch(`/leave/update/${id}`,{status},{
             withCredentials:true,
         })
         return response.data;
