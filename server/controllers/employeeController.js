@@ -1,6 +1,8 @@
 import uploadToCloudinary from '../config/cloudinary.js';
 import Employee from '../models/Employee.js';
 import fs from 'fs';
+import { randomTasks } from '../utils/randomTasks.js';
+import Attendance from '../models/Attendance.js';
 
 export const createEmployee = async (req, res) => {
   
@@ -27,7 +29,32 @@ export const createEmployee = async (req, res) => {
             photo,
         });
         await newEmployee.save();
-        return res.status(201).json({message:"Employee created successfully",employee:newEmployee});
+
+ 
+        try {
+            const createAttendance = await Attendance.create({
+              employee: newEmployee._id,
+              date: new Date(),
+              status: "Present",
+              tasks: [
+                { description: randomTasks() }
+              ],
+            });
+            
+            if (!createAttendance) {
+              throw new Error("Failed to create attendance record");
+            }
+          } catch (attendanceError) {
+            console.error("Attendance creation failed:", attendanceError);
+            // await Employee.findByIdAndDelete(newEmployee._id);
+            throw attendanceError;
+
+          }
+
+        return res.status(201).json({
+            message:"Employee created successfully",
+            employee:newEmployee,
+             });
     }catch(err){
         console.log("Server error occured!",err);
         return res.status(500).json({message:"Srever error occured",err})

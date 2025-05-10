@@ -76,3 +76,102 @@
     background-color: #4a148c !important;
     color: white !important;
   }
+
+  /* Add these styles to your existing CSS */
+.employeeAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.avatarPlaceholder {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: #555;
+}
+
+.actionButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.actionButton:hover {
+  background-color: #f5f5f5;
+  border-radius: 50%;
+}
+
+.statusDisplay.present {
+  background-color: #e6f7e6;
+  color: #2e7d32;
+}
+
+.statusDisplay.absent {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+.statusDisplay.medicalleave {
+  background-color: #fff3e0;
+  color: #e65100;
+}
+
+.statusDisplay.workfromhome {
+  background-color: #e3f2fd;
+  color: #1565c0;
+}
+
+
+/* Add these to your existing styles */
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  gap: 1rem;
+}
+
+.loadingSpinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  gap: 1rem;
+}
+
+.refreshButton {
+  padding: 0.5rem 1rem;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.refreshButton:hover {
+  background-color: #2980b9;
+}

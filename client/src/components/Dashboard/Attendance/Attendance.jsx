@@ -1,94 +1,142 @@
-import { useState } from "react";
-import { MoreVertical, Filter } from "lucide-react";
+import React, { useState, useEffect, useMemo } from "react";
+import { Filter, MoreVertical } from "lucide-react";
+import { useDispatch, useSelector, shallowEqual } from "react-redux";
+import { toast } from "react-hot-toast";
 import styles from "./Attendance.module.css";
 import Navbar from "../Candidates/comps/NavBar";
 import FilterOptions from "../Candidates/comps/FilterOptions";
 import DataTable from "../Candidates/comps/DataTable";
+import { 
+  getAllAttendance, 
+  updateAttendanceStatus 
+} from "../../../store/slices/attendanceSlice";
+
+const statusOptions = ["Present", "Absent", "Medical Leave", "Work From Home"];
 
 export default function AttendanceManagement() {
   const [isMobile, setIsMobile] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+  const dispatch = useDispatch();
+  
+  // Optimized Redux selector with shallow equality check
+  const { attendance, loading } = useSelector(
+    (state) => ({
+      attendance: state.attendance?.attendance || [],
+      loading: state.attendance?.loading || false
+    }),
+    shallowEqual
+  );
 
-  const statusOptions = ["Present", "Absent", "All"];
-  const attendanceStatusOptions = ["Present", "Absent"];
+  // Load data only once on mount
+  useEffect(() => {
+    dispatch(getAllAttendance());
+  }, [dispatch]);
 
-  const [attendance, setAttendance] = useState([
-    {
-      id: 1,
-      name: 'Jane Copper',
-      position: 'Intern',
-      department: 'Designer',
-      task: 'UI Design',
-      status: 'Present',
-      avatar: '/api/placeholder/32/32'
-    },
-    {
-      id: 2,
-      name: 'Arlene McCoy',
-      position: 'Full Time',
-      department: 'Designer',
-      task: 'Wireframing',
-      status: 'Present',
-      avatar: '/api/placeholder/32/32'
-    },
-    {
-      id: 3,
-      name: 'Cody Fisher',
-      position: 'Senior',
-      department: 'Backend Development',
-      task: 'API Development',
-      status: 'Absent',
-      avatar: '/api/placeholder/32/32'
-    },
-    {
-      id: 4,
-      name: 'Janney Wilson',
-      position: 'Junior',
-      department: 'Backend Development',
-      task: 'Database Optimization',
-      status: 'Present',
-      avatar: '/api/placeholder/32/32'
-    },
-    {
-      id: 5,
-      name: 'Leslie Alexander',
-      position: 'Team Lead',
-      department: 'Human Resource',
-      task: 'Recruitment',
-      status: 'Present',
-      avatar: '/api/placeholder/32/32'
+  // Memoized filtered data to prevent unnecessary recalculations
+  const filteredAttendance = useMemo(() => {
+    if (!attendance || attendance.length === 0) return [];
+    
+    return attendance.filter(record => {
+      if (!record || !record.employee) return false;
+      
+      if (statusFilter && record.status !== statusFilter) return false;
+      
+      if (searchTerm) {
+        const searchLower = searchTerm.toLowerCase();
+        return (
+          (record.employee.name?.toLowerCase().includes(searchLower)) ||
+          (record.employee.position?.toLowerCase().includes(searchLower)) ||
+          (record.employee.department?.toLowerCase().includes(searchLower)) ||
+          (record.status?.toLowerCase().includes(searchLower))
+        );
+      }
+      
+      return true;
+    });
+  }, [attendance, statusFilter, searchTerm]);
+
+  // Memoized table data to prevent unnecessary mappings
+  const tableData = useMemo(() => {
+    return filteredAttendance.map((record, index) => {
+      const employee = record.employee || {};
+      return {
+        id: record._id,
+        "Sr no.": index + 1,
+        "Profile": employee.photo ? (
+          <img 
+            src={employee.photo} 
+            alt={employee.name}
+            className={styles.employeeAvatar}
+            onError={(e) => {
+              e.target.onerror = null; 
+              e.target.src = '/default-avatar.png';
+            }}
+          />
+        ) : (
+          <div className={styles.avatarPlaceholder}>
+            {employee.name?.charAt(0)?.toUpperCase() || '?'}
+          </div>
+        ),
+        "Employee Name": employee.name || 'Unknown',
+        "Position": employee.position || 'N/A',
+        "Department": employee.department || 'N/A',
+        "Status": record.status || 'Present',
+        "Action": true
+      };
+    });
+  }, [filteredAttendance]);
+
+  const handleStatusChange = async (id, newStatus) => {
+    try {
+      await dispatch(updateAttendanceStatus({ id, status: newStatus })).unwrap();
+      toast.success("Attendance status updated");
+      await dispatch(getAllAttendance());
+    } catch (error) {
+      toast.error(error.message || "Failed to update status");
     }
-  ]);
-
-  const filteredAttendance = attendance.filter(record => {
-    if (statusFilter && statusFilter !== "All" && record.status !== statusFilter) return false;
-    if (searchTerm) {
-      const lowerSearch = searchTerm.toLowerCase();
-      return (
-        record.name.toLowerCase().includes(lowerSearch) ||
-        record.position.toLowerCase().includes(lowerSearch) ||
-        record.task.toLowerCase().includes(lowerSearch)
-      );
-    }
-    return true;
-  });
-
-  const handleStatusChange = (id, newStatus) => {
-    setAttendance(prev => 
-      prev.map(record => 
-        record.id === id 
-          ? { ...record, status: newStatus } 
-          : record
-      )
-    );
   };
+
+  const actionItems = [
+    
+  ];
+
+  // Mobile detection
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  if (loading) {
+    return (
+      <div className={styles.loadingContainer}>
+        <div className={styles.loadingSpinner}></div>
+        <p>Loading attendance data...</p>
+      </div>
+    );
+  }
+  
+  if (!loading && attendance.length === 0) {
+    return (
+      <div className={styles.emptyState}>
+        <p>No attendance records found</p>
+        <button 
+          onClick={() => dispatch(getAllAttendance())}
+          className={styles.refreshButton}
+        >
+          Refresh Data
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.container}>
       <Navbar title="Attendance" />
-
+      
       {isMobile && (
         <div className={styles.mobileFilterToggle}>
           <button 
@@ -100,7 +148,7 @@ export default function AttendanceManagement() {
           </button>
         </div>
       )}
-
+      
       <FilterOptions
         isMobile={isMobile}
         isFilterOpen={isFilterOpen}
@@ -108,39 +156,22 @@ export default function AttendanceManagement() {
         setSearchTerm={setSearchTerm}
         statusFilter={statusFilter}
         setStatusFilter={setStatusFilter}
-        statusOptions={statusOptions}
+        statusOptions={["All", ...statusOptions]}
+        onReset={() => {
+          setStatusFilter("");
+          setSearchTerm("");
+        }}
         hidePositionFilter={true}
-        addButtonText="Add Record"
-        onAddClick={() => console.log("Add new attendance record")}
+        hideAddButton={true}
       />
-
+      
       <DataTable
-        columns={["Sr. no", "Profile", "Employee Name", "Position", "Task", "Status", "Action"]}
-        statusOptions={attendanceStatusOptions} 
+        columns={["Sr no.", "Profile", "Employee Name", "Position", "Department", "Status", "Action"]}
+        data={tableData}
         onStatusChange={handleStatusChange}
-        data={filteredAttendance.map((record, index) => ({
-          id: record.id,
-          profile: (
-            <div className={styles.avatarCell}>
-              <img 
-                src={record.avatar} 
-                alt={record.name} 
-                className={styles.employeeAvatar} 
-              />
-            </div>
-          ),
-          name: record.name,
-          position: record.position,
-          task: record.task,
-          status: record.status,  // pass raw string, not JSX
-          action: (               // consistent key with DataTable usage
-            <button className={styles.actionButton}>
-              <MoreVertical className={styles.actionIcon} />
-            </button>
-          ),
-        }))}
+        statusOptions={statusOptions}
+        actionItems={actionItems}
       />
     </div>
   );
 }
- 

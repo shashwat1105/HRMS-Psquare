@@ -10,7 +10,7 @@ import errorHandler from './middleware/errorHandler.js';
 import authRoutes from './routes/authRoutes.js';
 import candidateRoutes from './routes/candidateRoutes.js';
 import employeeRoutes from './routes/employeeRoutes.js';
-// import attendanceRoutes from './routes/attendanceRoutes.js';
+import attendanceRoutes from './routes/attendanceRoutes.js';
 // import leaveRoutes from './routes/leaveRoutes.js';
 
 const app = express();
@@ -41,7 +41,7 @@ app.use(limiter);
 app.use('/auth', authRoutes);
 app.use('/candidate', candidateRoutes);
 app.use('/employee', employeeRoutes);
-// app.use('/attendance', attendanceRoutes);
+app.use('/attendance', attendanceRoutes);
 // app.use('/leaves', leaveRoutes);
 
 // Error handling middleware

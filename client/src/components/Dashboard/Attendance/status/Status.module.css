@@ -1,0 +1,74 @@
+.statusContainer {
+  display: inline-block;
+  background: transparent !important; /* Force transparent background */
+}
+
+/* Base status appearance */
+.statusText {
+  font-weight: 500;
+  font-size: 14px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 2px solid transparent;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Specific colored statuses */
+.statusText.statusPresent {
+  color: #16a34a !important;
+  border-color: #16a34a !important;
+}
+
+.statusText.statusAbsent {
+  color: #dc2626 !important;
+  border-color: #dc2626 !important;
+}
+
+.statusText.statusMedicalLeave {
+  color: #fbbf24 !important;
+  border-color: #fbbf24 !important;
+}
+
+.statusText.statusWorkFromHome {
+  color: #3b82f6 !important;
+  border-color: #3b82f6 !important;
+}
+
+/* Dropdown styles */
+.dropdownMenu {
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  margin-top: 6px;
+  padding: 4px 0;
+  z-index: 100;
+  min-width: 180px;
+}
+
+.dropdownItem {
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dropdownItem:hover {
+  background-color: #f3f4f6;
+}
+
+.selected {
+  font-weight: 600;
+}
+
+.checkIcon {
+  margin-left: 8px;
+  color: #16a34a;
+}

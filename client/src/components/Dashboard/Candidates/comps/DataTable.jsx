@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { MoreVertical } from "lucide-react";
 import styles from "./DataTable.module.css";
 import StatusBadge from "./StatusBadge";
@@ -9,7 +9,8 @@ export default function DataTable({
   data,
   onStatusChange,
   statusOptions,
-  actionItems
+  actionItems,
+  renderStatusCell
 }) {
   const [activeDropdown, setActiveDropdown] = useState(null);
 
@@ -17,6 +18,9 @@ export default function DataTable({
     event.stopPropagation();
     setActiveDropdown(activeDropdown === id ? null : id);
   };
+
+  // console.log("DataTable data:", data);
+  // console.log("DataTable columns:", columns);
 
   return (
     <div className={styles.tableContainer}>
@@ -38,13 +42,17 @@ export default function DataTable({
                 if (column === "Status") {
                   return (
                     <td key={`status-${rowIndex}`}>
-                      <StatusBadge
-                        status={item.Status}
-                        statusOptions={statusOptions}
-                        onChange={(newStatus) => 
-                          onStatusChange(item.id, newStatus)
-                        }
-                      />
+                      {renderStatusCell ? (
+                        renderStatusCell(item) // Use custom renderer if provided
+                      ) : (
+                        <StatusBadge
+                          status={item.Status}
+                          statusOptions={statusOptions}
+                          onChange={(newStatus) => 
+                            onStatusChange(item.id, newStatus)
+                          }
+                        />
+                      )}
                     </td>
                   );
                 }
@@ -53,10 +61,21 @@ export default function DataTable({
                   return (
                     <td key={`action-${rowIndex}`}>
                       <div className={styles.actionCell}>
-                        <button onClick={(e) => handleActionClick(rowIndex, e)}>
+                        <button
+                          onClick={(e) => {
+                            if (actionItems?.length > 0) {
+                              handleActionClick(rowIndex, e);
+                            } else {
+                              e.stopPropagation(); // prevent row click behavior if any
+                            }
+                          }}
+                          className={styles.actionButton}
+                          disabled={actionItems?.length === 0}
+                        >
                           <MoreVertical className={styles.actionIcon} />
                         </button>
-                        {activeDropdown === rowIndex && (
+                
+                        {activeDropdown === rowIndex && actionItems?.length > 0 && (
                           <ActionDropdown 
                             items={actionItems} 
                             onItemClick={(action) => {
@@ -70,7 +89,11 @@ export default function DataTable({
                   );
                 }
                 
-                return <td key={`${columnKey}-${rowIndex}`}>{cellValue}</td>;
+                
+                return <td key={`${column}-${rowIndex}`}>
+                {React.isValidElement(cellValue) ? cellValue : String(cellValue ?? '')}
+              </td>
+              
               })}
             </tr>
           ))}

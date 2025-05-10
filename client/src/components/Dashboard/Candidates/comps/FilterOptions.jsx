@@ -139,12 +139,15 @@ export default function FilterOptions({
             className={styles.searchInput}
           />
         </div>
-        <button 
-          className={styles.addButton}
-          onClick={onAddClick}
-        >
-          {addButtonText}
-        </button>
+        {addButtonText && onAddClick && (
+  <button 
+    className={styles.addButton}
+    onClick={onAddClick}
+  >
+    {addButtonText}
+  </button>
+)}
+
       </div>
     </div>
   );
