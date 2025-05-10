@@ -11,7 +11,7 @@ import authRoutes from './routes/authRoutes.js';
 import candidateRoutes from './routes/candidateRoutes.js';
 import employeeRoutes from './routes/employeeRoutes.js';
 import attendanceRoutes from './routes/attendanceRoutes.js';
-// import leaveRoutes from './routes/leaveRoutes.js';
+import leaveRoutes from './routes/leaveRoutes.js';
 
 const app = express();
 
@@ -42,7 +42,7 @@ app.use('/auth', authRoutes);
 app.use('/candidate', candidateRoutes);
 app.use('/employee', employeeRoutes);
 app.use('/attendance', attendanceRoutes);
-// app.use('/leaves', leaveRoutes);
+app.use('/leaves', leaveRoutes);
 
 // Error handling middleware
 app.use(errorHandler);

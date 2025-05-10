@@ -36,6 +36,8 @@
   
   .tableHeader {
     display: none;
+    background-color: #5e0e8b;
+    color: white;
   }
   
   @media (min-width: 640px) {
@@ -45,7 +47,7 @@
       border-bottom: 1px solid #eee;
       font-size: 14px;
       font-weight: 600;
-      color: #444;
+      color:white
     }
   }
   
@@ -394,3 +396,7 @@
     color: #555;
     font-size: 14px;
   }
+ 
+  
+ 
+ 

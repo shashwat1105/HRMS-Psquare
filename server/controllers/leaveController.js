@@ -1,7 +1,7 @@
 import Leave from '../models/Leaves.js';
 import Employee from '../models/Employee.js';
 import { StatusCodes } from 'http-status-codes';
-import { cloudinary } from '../config/cloudinary.js';
+// import { cloudinary } from '../config/cloudinary.js';
 import fs from 'fs';
 
 export const createLeave = async (req, res) => {
@@ -10,7 +10,6 @@ export const createLeave = async (req, res) => {
   const emp = await Employee.findOne({
     _id: employee,
     status: 'active',
-    createdBy: req.user.userId,
   });
   
   if (!emp) {

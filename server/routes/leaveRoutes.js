@@ -1,5 +1,4 @@
 import express from 'express';
-import { authenticateUser, authorizeRoles } from '../middleware/auth.js';
 import {
   createLeave,
   getAllLeaves,
@@ -12,25 +11,21 @@ import upload from '../config/multer.js';
 
 const router = express.Router();
 
-router
-  .route('/')
-  .post(authenticateUser,authorizeRoles('hr'),upload.array('docs', 5),createLeave)
-  .get(authenticateUser, authorizeRoles('hr'), getAllLeaves);
+router.post('/create',upload.fields([{name:'docs',maxCount:1}]),createLeave);
+ router.get('/getAll', getAllLeaves);
 
-router
-  .route('/calendar')
-  .get(authenticateUser, authorizeRoles('hr'), getCalendarLeaves);
+router.get('/calendar',getCalendarLeaves)
 
-router
-  .route('/:id/status')
-  .patch(authenticateUser, authorizeRoles('hr'), updateLeaveStatus);
+// router
+//   .route('/:id/status')
+//   .patch(authenticateUser, authorizeRoles('hr'), updateLeaveStatus);
 
-router
-  .route('/:id/docs/:docId')
-  .get(authenticateUser, authorizeRoles('hr'), downloadLeaveDoc);
+// router
+//   .route('/:id/docs/:docId')
+//   .get(authenticateUser, authorizeRoles('hr'), downloadLeaveDoc);
 
-router
-  .route('/:id')
-  .delete(authenticateUser, authorizeRoles('hr'), deleteLeave);
+// router
+//   .route('/:id')
+//   .delete(authenticateUser, authorizeRoles('hr'), deleteLeave);
 
 export default router;

@@ -1,0 +1,166 @@
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  
+  .modalContent {
+    background-color: white;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 550px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  }
+  
+  .modalHeader {
+    background-color: #5a189a;
+    color: white;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .modalHeader h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 500;
+  }
+  
+  .closeButton {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0;
+  }
+  
+  .modalBody {
+    padding: 20px;
+  }
+  
+  .inputContainer {
+    margin-bottom: 16px;
+    position: relative;
+  }
+  
+  .inputField {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #ddd;
+    border-radius: 50px;
+    font-size: 16px;
+    outline: none;
+    box-sizing: border-box;
+  }
+  
+  .inputField:focus {
+    border-color: #5a189a;
+  }
+  
+  .searchContainer {
+    position: relative;
+  }
+  
+  .searchIcon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+  }
+  
+  .fieldIcon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+  }
+  
+  .dropdownList {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 10;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .dropdownItem {
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .dropdownItem:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .uploadField {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #ddd;
+    border-radius: 50px;
+    font-size: 16px;
+    cursor: pointer;
+    color: #666;
+  }
+  
+  .uploadIcon {
+    color: #5a189a;
+  }
+  
+  .fileInput {
+    display: none;
+  }
+  
+  .actionContainer {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  .saveButton {
+    padding: 12px 40px;
+    border-radius: 50px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: not-allowed;
+    border: none;
+    background-color: #e0e0e0;
+    color: #888;
+    transition: all 0.3s ease;
+  }
+  
+  .saveButtonEnabled {
+    background-color: #5a189a;
+    color: white;
+    cursor: pointer;
+  }
+  
+  .saveButtonEnabled:hover {
+    background-color: #4c1580;
+  }
+  
+  /* Ensure required fields are marked visually */
+  input:required {
+    background-color: #fff;
+  }
