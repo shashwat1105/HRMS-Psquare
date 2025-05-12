@@ -37,11 +37,18 @@ const AddLeaveModal = ({ isOpen, onClose }) => {
       }
     };
 
+    
+
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  useEffect(() => {
+    console.log("Employees in store:", employees);
+  }, [employees]);
+  
 
   // Filter employees based on search term
   useEffect(() => {
