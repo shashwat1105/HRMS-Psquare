@@ -35,7 +35,6 @@ const Sidebar = ({ mobileMenuOpen, activeTab, setActiveTab, setMobileMenuOpen })
 
   return (
     <div className={`${styles.sidebar} ${mobileMenuOpen ? styles.mobileOpen : ''}`}>
-      {/* Mobile Close Button */}
       <div className={styles.mobileHeader}>
         <button 
           onClick={() => setMobileMenuOpen(false)}

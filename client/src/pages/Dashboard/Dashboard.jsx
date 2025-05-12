@@ -14,7 +14,6 @@ export default function Dashboard() {
 
   return (
     <div className={styles.dashboardContainer}>
-      {/* Mobile Header */}
       <div className={styles.mobileHeader} >
         <div className={styles.mobileHeaderLeft}>
           <button onClick={toggleMobileMenu} className={styles.menuButton}>
@@ -29,7 +28,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Sidebar */}
+
       <Sidebar 
         mobileMenuOpen={mobileMenuOpen} 
         activeTab={activeTab}
@@ -38,8 +37,7 @@ export default function Dashboard() {
         style={{ zIndex: 1000 }}
       />
 
-      {/* Main Content */}
-      <MainContent activeTab={activeTab} />
+      <MainContent activeTab={activeTab} onTabChange={setActiveTab}/>
     </div>
   );
 }

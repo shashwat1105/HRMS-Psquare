@@ -19,8 +19,7 @@ export default function DataTable({
     setActiveDropdown(activeDropdown === id ? null : id);
   };
 
-  // console.log("DataTable data:", data);
-  // console.log("DataTable columns:", columns);
+ 
 
   return (
     <div className={styles.tableContainer}>
@@ -43,7 +42,7 @@ export default function DataTable({
                   return (
                     <td key={`status-${rowIndex}`}>
                       {renderStatusCell ? (
-                        renderStatusCell(item) // Use custom renderer if provided
+                        renderStatusCell(item) 
                       ) : (
                         <StatusBadge
                           status={item.Status}
@@ -66,7 +65,7 @@ export default function DataTable({
                             if (actionItems?.length > 0) {
                               handleActionClick(rowIndex, e);
                             } else {
-                              e.stopPropagation(); // prevent row click behavior if any
+                              e.stopPropagation(); 
                             }
                           }}
                           className={styles.actionButton}

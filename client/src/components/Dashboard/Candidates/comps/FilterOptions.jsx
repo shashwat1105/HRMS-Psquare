@@ -45,7 +45,6 @@ export default function FilterOptions({
     }
   };
 
-  // Determine if we should show the clear button
   const shouldShowClearButton = 
     (!hideStatusFilter && statusFilter) || 
     (!hidePositionFilter && positionFilter) || 
@@ -54,7 +53,6 @@ export default function FilterOptions({
   return (
     <div className={`${styles.filterControls} ${isMobile && !isFilterOpen ? styles.hidden : ''}`}>
       <div className={styles.filterGroup}>
-        {/* Status Dropdown - conditionally rendered */}
         {!hideStatusFilter && (
           <div className={styles.customDropdown}>
             <button 
@@ -85,7 +83,6 @@ export default function FilterOptions({
           </div>
         )}
         
-        {/* Position Dropdown - conditionally rendered */}
         {!hidePositionFilter && (
           <div className={styles.customDropdown}>
             <button 
@@ -116,7 +113,6 @@ export default function FilterOptions({
           </div>
         )}
         
-        {/* Clear filters button */}
         {shouldShowClearButton && (
           <button 
             onClick={clearFilters}

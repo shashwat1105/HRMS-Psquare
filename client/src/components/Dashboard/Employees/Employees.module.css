@@ -42,7 +42,6 @@
     object-fit: cover;
   }
   
-  /* Table header styles */
   :global(.table th) {
     background-color: #4a148c !important;
     color: white !important;

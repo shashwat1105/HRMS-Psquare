@@ -7,7 +7,6 @@ import uploadToCloudinary from '../config/cloudinary.js';
 export const createLeave = async (req, res) => {
     const { employee, designation, leaveDate, reason } = req.body;
   
-    // Validate all required fields
     if (!employee || !designation || !leaveDate || !reason) {
       return res.status(400).json({
         success: false,
@@ -15,7 +14,6 @@ export const createLeave = async (req, res) => {
       });
     }
   
-    // Check if file was uploaded
     if (!req?.files?.docs?.[0]) {
       return res.status(400).json({
         success: false,
@@ -26,7 +24,7 @@ export const createLeave = async (req, res) => {
     try {
       const path = req.files.docs[0].path;
       const docs = await uploadToCloudinary(path, 'leave');
-      fs.unlinkSync(path); // Clean up the temporary file
+      fs.unlinkSync(path); 
   
       if (!docs) {
         throw new Error('Failed to upload document to Cloudinary');
@@ -37,7 +35,7 @@ export const createLeave = async (req, res) => {
         designation,
         date: leaveDate,
         reason,
-        docs, // Cloudinary URL
+        docs, 
       });
   
       res.status(201).json({
@@ -145,60 +143,4 @@ export const getCalendarLeaves = async (req, res) => {
     });
   };
 
-export const downloadLeaveDoc = async (req, res) => {
-  const { id, docId } = req.params;
-  
-  const leave = await Leave.findOne({
-    _id: id,
-    createdBy: req.user.userId,
-  });
-  
-  if (!leave) {
-    return res.status(StatusCodes.NOT_FOUND).json({
-      success: false,
-      message: `No leave found with id ${id}`,
-    });
-  }
-  
-  const doc = leave.docs.id(docId);
-  if (!doc) {
-    return res.status(StatusCodes.NOT_FOUND).json({
-      success: false,
-      message: `No document found with id ${docId}`,
-    });
-  }
-  
-  res.status(StatusCodes.OK).json({
-    success: true,
-    data: {
-      docUrl: doc.url,
-    },
-  });
-};
-
-export const deleteLeave = async (req, res) => {
-  const { id } = req.params;
-  
-  const leave = await Leave.findOneAndDelete({
-    _id: id,
-    createdBy: req.user.userId,
-  });
-  
-  if (!leave) {
-    return res.status(StatusCodes.NOT_FOUND).json({
-      success: false,
-      message: `No leave found with id ${id}`,
-    });
-  }
-  
-  if (leave.docs && leave.docs.length > 0) {
-    for (const doc of leave.docs) {
-      await cloudinary.uploader.destroy(doc.publicId);
-    }
-  }
-  
-  res.status(StatusCodes.OK).json({
-    success: true,
-    data: {},
-  });
-};
+ 

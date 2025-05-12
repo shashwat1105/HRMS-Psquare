@@ -5,7 +5,7 @@ export const getAllAttendance = async (req, res) => {
       const attendance = await Attendance.find({})
         .populate({
           path: 'employee',
-          select: 'name email phone position photo department' // Added department
+          select: 'name email phone position photo department' 
         });
         
       res.status(200).json({

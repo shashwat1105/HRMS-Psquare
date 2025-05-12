@@ -1,4 +1,3 @@
-/* Base Styles */
 .dashboardContainer {
     display: flex;
     flex-direction: column;
@@ -7,7 +6,6 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   }
   
-  /* Mobile Header */
   .mobileHeader {
     display: flex;
     justify-content: space-between;
@@ -48,7 +46,6 @@
     cursor: pointer;
   }
   
-  /* Sidebar */
   .sidebar {
     width: 100%;
     background-color: white;
@@ -159,7 +156,6 @@
     margin-right: 0.75rem;
   }
   
-  /* Main Content */
   .mainContent {
     flex: 1;
     overflow: auto;
@@ -381,7 +377,6 @@
   }
 
 
-  /* Candidate Navbar */
 .candidateNavbar {
     display: flex;
     justify-content: space-between;
@@ -447,7 +442,6 @@
     background-color: #f3f4f6;
   }
   
-  /* Filters Section */
   .filtersSection {
     display: flex;
     flex-wrap: wrap;
@@ -522,7 +516,6 @@
     background-color: #3b0060;
   }
 
-  /* Add these to your existing Dashboard.module.css */
 
 .mobileHeader {
     z-index: 100;
@@ -538,7 +531,6 @@
     z-index: 1;
   }
   
-  /* Responsive adjustments */
   @media (max-width: 768px) {
     .filtersSection {
       flex-direction: column;

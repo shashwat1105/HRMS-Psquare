@@ -17,7 +17,7 @@ export default function CandidatesTable() {
   const [statusFilter, setStatusFilter] = useState("");
   const [positionFilter, setPositionFilter] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalMode, setModalMode] = useState("add"); // or "edit"
+  const [modalMode, setModalMode] = useState("add"); 
 const [editingCandidate, setEditingCandidate] = useState({});
 const dispatch=useDispatch();
 const { candidates = [],loading } = useSelector((state) => state.candidate) || {};
@@ -51,12 +51,10 @@ const { candidates = [],loading } = useSelector((state) => state.candidate) || {
       return false;
     }
   
-    // Position filter (exact match)
     if (positionFilter && candidatePosition !== positionFilterLower) {
       return false;
     }
   
-    // Search term (partial match in multiple fields)
     if (searchTerm) {
       return (
         candidate.name?.toLowerCase().includes(searchTermLower) ||
@@ -228,8 +226,8 @@ if(loading) return <div>Loading......</div>
   onClose={() => setIsModalOpen(false)}
   onSave={handleSaveCandidate}
   title="Candidate"
-  mode={modalMode} // "add" or "edit"
-  initialData={editingCandidate} // data when in edit mode
+  mode={modalMode} 
+  initialData={editingCandidate} 
   fields={[
     { name: 'name', label: 'Full Name', type: 'text', required: true },
     { name: 'email', label: 'Email', type: 'email', required: true },

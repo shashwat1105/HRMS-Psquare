@@ -36,12 +36,10 @@ export default function EmployeeManagement() {
   const filteredEmployees = (employees || []).filter(employee => {
     if (!employee) return false;
     
-    // Check position filter
     if (positionFilter && employee.position !== positionFilter) {
       return false;
     }
     
-    // Check search term
     if (searchTerm) {
       const searchLower = searchTerm.toLowerCase();
       return (
@@ -136,7 +134,7 @@ export default function EmployeeManagement() {
   const resetFilters = () => {
     setPositionFilter("");
     setSearchTerm("");
-    setIsFilterOpen(false); // Also close the filter panel on reset
+    setIsFilterOpen(false); 
   };
 
   useEffect(() => {

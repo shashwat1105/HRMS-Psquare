@@ -97,6 +97,7 @@ export const deleteEmployee = createAsyncThunk(
 const employeeSlice=createSlice({
     name:'employee',
     initialState:{
+        leaveRequests: [],
         employees:[],
         loading:false,
         error:null,

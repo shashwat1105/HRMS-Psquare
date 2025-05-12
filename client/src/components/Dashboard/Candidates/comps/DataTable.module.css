@@ -1,8 +1,6 @@
-/* DataTable.module.css */
 
 
 .tableContainer {
-    /* overflow-y: visible; */
     flex-grow: 1;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     border-radius: 0.8rem;
@@ -56,7 +54,6 @@
     border: none;
   }
   
-  /* Custom scrollbar */
   .tableContainer::-webkit-scrollbar {
     height: 6px;
   }

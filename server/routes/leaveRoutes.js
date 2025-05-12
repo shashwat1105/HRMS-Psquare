@@ -21,16 +21,6 @@ router.patch('/update/:id', updateLeaveStatus);
 router.get('/calendar',getCalendarLeaves)
 
 
-// router
-//   .route('/:id/status')
-//   .patch(authenticateUser, authorizeRoles('hr'), updateLeaveStatus);
-
-// router
-//   .route('/:id/docs/:docId')
-//   .get(authenticateUser, authorizeRoles('hr'), downloadLeaveDoc);
-
-// router
-//   .route('/:id')
-//   .delete(authenticateUser, authorizeRoles('hr'), deleteLeave);
+ 
 
 export default router;

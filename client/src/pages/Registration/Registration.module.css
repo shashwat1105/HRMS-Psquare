@@ -7,11 +7,11 @@
   .container {
     display: flex;
     flex-direction: column;
-    min-height: auto; /* Changed from fixed height */
+    min-height: auto; 
     width: 100%;
     padding: 20px;
-    margin: 20px auto; /* Added margin for better spacing on large screens */
-    max-width: 1200px; /* Added max-width to prevent container from getting too wide */
+    margin: 20px auto; 
+    max-width: 1200px; 
 }
 
   
@@ -222,7 +222,6 @@
   
 
 
-/* Add these to your existing Registration.module.css */
 
 .forgotPasswordContainer {
     display: flex;
@@ -264,7 +263,6 @@
     text-decoration: underline;
   }
 
-  /* Responsive styles */
   @media (max-width: 992px) {
     .contentContainer {
         max-width: 900px;
@@ -274,15 +272,15 @@
 @media (max-width: 768px) {
     .container {
         padding: 10px;
-        margin: 0 auto; /* Remove top/bottom margin on mobile */
-        min-height: 100vh; /* Full height only on mobile */
+        margin: 0 auto; 
+        min-height: 100vh; 
     }
     
     .contentContainer {
         flex-direction: column;
         max-width: 100%;
         margin: 0 auto;
-        min-height: auto; /* Let content determine height */
+        min-height: auto; 
     }
     
     .leftSection, .rightSection {
@@ -291,7 +289,7 @@
     
     .leftSection {
         padding: 30px 20px;
-        display: none; /* Hide left section on mobile */
+        display: none; 
     }
     
     .rightSection {

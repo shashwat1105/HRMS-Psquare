@@ -24,12 +24,11 @@ const AddLeaveModal = ({ isOpen, onClose ,handleSaveLeave,onCreateSuccess}) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Get employees from Redux store (you'll need to fetch them elsewhere)
   const { employees } = useSelector((state) => ({
     employees: state.employee.employees || []
   }));
 
-  // Close dropdown when clicking outside
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -50,7 +49,6 @@ const AddLeaveModal = ({ isOpen, onClose ,handleSaveLeave,onCreateSuccess}) => {
   }, [employees]);
   
 
-  // Filter employees based on search term
   useEffect(() => {
     if (searchTerm.trim() !== '' && !selectedEmployee) {
       const filtered = employees.filter(emp => 
@@ -64,7 +62,7 @@ const AddLeaveModal = ({ isOpen, onClose ,handleSaveLeave,onCreateSuccess}) => {
     }
   }, [searchTerm, employees, selectedEmployee]);
 
-  // Validate form
+
   useEffect(() => {
     const isValid = 
       selectedEmployee !== null && 
@@ -118,8 +116,8 @@ const AddLeaveModal = ({ isOpen, onClose ,handleSaveLeave,onCreateSuccess}) => {
     setDocumentName('');
   };
 
-// In your handleSubmit function
-const handleSubmit = async () => {
+
+  const handleSubmit = async () => {
     if (!isFormValid || !formData.docs) {
       toast.error('Please fill all required fields and upload a supporting document');
       return;
@@ -133,14 +131,14 @@ const handleSubmit = async () => {
       formDataToSend.append('designation', formData.designation);
       formDataToSend.append('leaveDate', formData.leaveDate);
       formDataToSend.append('reason', formData.reason);
-      formDataToSend.append('docs', formData.docs); // Consistent field name
+      formDataToSend.append('docs', formData.docs); 
       
       await dispatch(createLeave(formDataToSend)).unwrap();
       
       toast.success('Leave request submitted successfully');
       onClose();
       resetForm();
-      dispatch(getAllLeaves()); // Refresh the leaves list
+      dispatch(getAllLeaves());
     } catch (error) {
       toast.error(error.message || 'Failed to submit leave request');
     } finally {
@@ -182,7 +180,7 @@ const handleSubmit = async () => {
         
         <div className={styles.modalBody}>
           <div className={styles.formGrid}>
-            {/* Employee Search */}
+
             <div className={styles.inputContainer}>
               <label className={styles.inputLabel}>Employee*</label>
               <div className={styles.searchContainer} ref={dropdownRef}>
@@ -220,7 +218,7 @@ const handleSubmit = async () => {
               </div>
             </div>
 
-            {/* Designation */}
+
             <div className={styles.inputContainer}>
               <label className={styles.inputLabel}>Designation*</label>
               <input
@@ -235,7 +233,6 @@ const handleSubmit = async () => {
               />
             </div>
 
-            {/* Leave Date */}
             <div className={styles.inputContainer}>
               <label className={styles.inputLabel}>Leave Date*</label>
               <input
@@ -246,11 +243,10 @@ const handleSubmit = async () => {
                 className={styles.inputField}
                 required
                 disabled={isSubmitting}
-                min={new Date().toISOString().split('T')[0]} // Disable past dates
+                min={new Date().toISOString().split('T')[0]} 
               />
             </div>
 
-            {/* Document Upload */}
             <div className={styles.inputContainer}>
               <label className={styles.inputLabel}>Supporting Document</label>
               <div className={styles.uploadContainer}>
@@ -289,7 +285,6 @@ const handleSubmit = async () => {
             </div>
           </div>
 
-          {/* Reason - Full Width */}
           <div className={styles.inputContainer}>
             <label className={styles.inputLabel}>Reason for Leave*</label>
             <textarea
@@ -304,7 +299,6 @@ const handleSubmit = async () => {
             />
           </div>
 
-          {/* Save Button */}
           <div className={styles.actionContainer}>
             <button 
               className={`${styles.saveButton} ${isFormValid ? styles.saveButtonEnabled : ''}`} 

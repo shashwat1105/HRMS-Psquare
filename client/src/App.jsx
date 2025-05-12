@@ -22,7 +22,6 @@ function App() {
     }
   }, [tokenExpiry, dispatch]);
 
-  // On reload: check if token exists in localStorage and still valid
   useEffect(() => {
     const token = localStorage.getItem('token');
     const user = JSON.parse(localStorage.getItem('user'));

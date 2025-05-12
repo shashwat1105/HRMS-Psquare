@@ -20,14 +20,12 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const { user, isLoading, error, tokenExpiry } = useSelector((state) => state.auth);
 
-  // Handle side effects after login
   useEffect(() => {
     if (user) {
       navigate('/dashboard');
     }
   }, [user, navigate]);
 
-  // Auto-logout when token expires
   useEffect(() => {
     let timer;
 

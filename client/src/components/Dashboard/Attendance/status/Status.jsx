@@ -12,7 +12,6 @@ export default function Status({ status, onChange }) {
     "Work From Home",
   ];
 
-  // Get the correct CSS module class for the status
   const getStatusClass = (status) => {
     const statusMap = {
       "Present": styles.statusPresent,

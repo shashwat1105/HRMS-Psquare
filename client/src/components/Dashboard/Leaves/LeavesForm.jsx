@@ -12,21 +12,17 @@ export default function LeaveForm({ leaveRequests, onStatusChange }) {
   const [statusOptions] = useState(['Approved', 'Pending', 'Rejected']);
   const dispatch = useDispatch();
 
-  // Month names for display
   const monthNames = [
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December'
   ];
   
-  // Get the current month name
   const currentMonthName = monthNames[currentMonth];
   
-  // Get days in current month
   const getDaysInMonth = (month, year) => {
     return new Date(year, month + 1, 0).getDate();
   };
   
-  // Get first day of month (0 = Sunday, 1 = Monday, etc.)
   const getFirstDayOfMonth = (month, year) => {
     return new Date(year, month, 1).getDay();
   };
@@ -34,7 +30,6 @@ export default function LeaveForm({ leaveRequests, onStatusChange }) {
   const daysInMonth = getDaysInMonth(currentMonth, currentYear);
   const firstDayOfMonth = getFirstDayOfMonth(currentMonth, currentYear);
   
-  // Navigation handlers
   const goToPreviousMonth = () => {
     if (currentMonth === 0) {
       setCurrentMonth(11);
@@ -53,12 +48,10 @@ export default function LeaveForm({ leaveRequests, onStatusChange }) {
     }
   };
   
-  // Check if a day has any leave approvals
   const hasLeaveOnDate = (day) => {
     return leaveRequests.some(leave => {
       if (!leave.date) return false;
       
-      // Parse the date based on your format (assuming DD/MM/YY)
       const [leaveDay, leaveMonth, leaveYear] = leave.date.split('/').map(Number);
       return (
         leaveDay === day && 
@@ -68,17 +61,14 @@ export default function LeaveForm({ leaveRequests, onStatusChange }) {
     });
   };
   
-  // Generate calendar days
   const generateCalendarDays = () => {
     const days = [];
     const blanks = [];
     
-    // Add blank spaces for days before the 1st of the month
     for (let i = 0; i < firstDayOfMonth; i++) {
       blanks.push(<td key={`blank-${i}`} className={`${styles.calendarDay} ${styles.empty}`}></td>);
     }
     
-    // Add the days of the month
     for (let d = 1; d <= daysInMonth; d++) {
       const hasLeave = hasLeaveOnDate(d);
       
@@ -93,7 +83,6 @@ export default function LeaveForm({ leaveRequests, onStatusChange }) {
     return [...blanks, ...days];
   };
 
-  // Generate rows for the calendar
   const generateCalendarRows = () => {
     const allDays = generateCalendarDays();
     const rows = [];
@@ -107,7 +96,6 @@ export default function LeaveForm({ leaveRequests, onStatusChange }) {
       cells.push(day);
       
       if (i === allDays.length - 1) {
-        // Add any remaining cells
         rows.push(<tr key={i}>{cells}</tr>);
       }
     });
@@ -115,28 +103,25 @@ export default function LeaveForm({ leaveRequests, onStatusChange }) {
     return rows;
   };
 
-  // Toggle dropdown for status change
   const toggleDropdown = (id) => {
     setOpenDropdownId(openDropdownId === id ? null : id);
   };
   
-  // Change status of a leave request
   const handleStatusChange = async (id, newStatus) => {
     try {
       await dispatch(updateLeaveStatus({ id, status: newStatus })).unwrap();
       toast.success('Leave status updated successfully');
-      onStatusChange(id, newStatus); // Notify parent component
+      onStatusChange(id, newStatus); 
       setOpenDropdownId(null);
     } catch (error) {
       toast.error(error.message || 'Failed to update leave status');
     }
   };
 
-  // Format date for display (DD/MM/YY)
   const formatDate = (dateString) => {
     if (!dateString) return '';
     const date = new Date(dateString);
-    if (isNaN(date.getTime())) return dateString; // Return original if invalid
+    if (isNaN(date.getTime())) return dateString; 
     
     const day = date.getDate().toString().padStart(2, '0');
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -162,7 +147,7 @@ export default function LeaveForm({ leaveRequests, onStatusChange }) {
         
         <div className={styles.leavesTable}>
           {leaveRequests.map((leave) => (
-            <div key={leave.id} className={styles.leaveRow}>
+            <div key={leave._id} className={styles.leaveRow}>
               <div className={`${styles.column} ${styles.profileColumn}`}>
                 <div className={styles.avatar}>
                   {leave.employee?.name?.charAt(0) || '?'}

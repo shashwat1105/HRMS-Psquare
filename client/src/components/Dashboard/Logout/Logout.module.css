@@ -1,0 +1,115 @@
+
+.logoutModalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  
+  .logoutModalContainer {
+    background-color: #ffffff;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 450px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.3s ease;
+  }
+  
+  .logoutModalHeader {
+    background-color: #4a148c; /* Using the requested purple color directly */
+    color: #ffffff;
+    padding: 16px 20px;
+    text-align: center;
+  }
+  
+  .logoutModalHeader h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 500;
+  }
+  
+  .logoutModalContent {
+    padding: 24px 20px;
+    text-align: center;
+  }
+  
+  .logoutModalContent p {
+    margin: 0;
+    font-size: 1rem;
+    color: #333;
+  }
+  
+  .logoutModalActions {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    padding: 16px 20px 24px;
+  }
+  
+  .logoutModalButton {
+    padding: 10px 24px;
+    border-radius: 24px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 100px;
+    border: none;
+    outline: none;
+  }
+  
+  .cancelButton {
+    background-color: #4a148c;
+    color: #ffffff;
+  }
+  
+  .cancelButton:hover {
+    background-color: #38106c;
+  }
+  
+  .logoutButton {
+    background-color: #ffffff;
+    color: #ff1744;
+    border: 1px solid #ff1744;
+  }
+  
+  .logoutButton:hover {
+    background-color: #ff1744;
+    color: #ffffff;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Media Queries for responsiveness */
+  @media (max-width: 576px) {
+    .logoutModalContainer {
+      width: 95%;
+    }
+    
+    .logoutModalActions {
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .logoutModalButton {
+      width: 100%;
+    }
+  }
+  
+  

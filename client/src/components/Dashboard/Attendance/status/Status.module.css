@@ -1,9 +1,8 @@
 .statusContainer {
   display: inline-block;
-  background: transparent !important; /* Force transparent background */
+  background: transparent !important; 
 }
 
-/* Base status appearance */
 .statusText {
   font-weight: 500;
   font-size: 14px;
@@ -16,7 +15,6 @@
   transition: all 0.2s ease-in-out;
 }
 
-/* Specific colored statuses */
 .statusText.statusPresent {
   color: #16a34a !important;
   border-color: #16a34a !important;
@@ -37,7 +35,6 @@
   border-color: #3b82f6 !important;
 }
 
-/* Dropdown styles */
 .dropdownMenu {
   position: absolute;
   background-color: white;

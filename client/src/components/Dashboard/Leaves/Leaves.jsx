@@ -12,6 +12,7 @@ import {
   getAllLeaves, 
   updateLeaveStatus 
 } from "../../../store/slices/leaveSlice";
+import { getAllEmployees } from "../../../store/slices/employeeSlice";
 
 export default function LeavesPage() {
   const dispatch = useDispatch();
@@ -23,20 +24,21 @@ export default function LeavesPage() {
 
   const statusOptions = ["Approved", "Pending", "Rejected"];
   
-  // Get leaves and loading state from Redux store
-  const { leaveRequests, isLoading } = useSelector(
+  const { leaveRequests, isLoading ,employees} = useSelector(
     (state) => ({
       leaveRequests: state.leave.leaveRequests || [],
       isLoading: state.leave.isLoading || false,
+      employees: state.employee.employees || [] 
     })
   );
 
-  // Fetch leaves on component mount
+  
   useEffect(() => {
     dispatch(getAllLeaves());
+    dispatch(getAllEmployees())
   }, [dispatch]);
 
-  // Filter leaves based on search and status
+  
   const filteredLeaves = leaveRequests.filter(leave => {
     if (!leave.employee) return false;
     if (statusFilter && leave.status !== statusFilter) return false;
@@ -51,8 +53,7 @@ export default function LeavesPage() {
     return true;
   });
 
-  // Handle saving new leave
- // Replace your current handleSaveLeave with this more robust version
+ 
 const handleSaveLeave = async (leaveData) => {
   try {
     const formData = new FormData();
@@ -67,14 +68,14 @@ const handleSaveLeave = async (leaveData) => {
 
     await dispatch(createLeave(formData)).unwrap();
     toast.success("Leave request submitted successfully");
-    return true; // Indicate success
+    return true; 
   } catch (error) {
     toast.error(error.message || "Failed to submit leave request");
-    return false; // Indicate failure
+    return false; 
   }
 };
 
-  // Handle status change
+
   const handleStatusChange = async (leaveId, newStatus) => {
     try {
       await dispatch(updateLeaveStatus({
@@ -83,13 +84,12 @@ const handleSaveLeave = async (leaveData) => {
       })).unwrap();
       
       toast.success("Leave status updated successfully");
-      dispatch(getAllLeaves()); // Refresh leaves list
+      dispatch(getAllLeaves()); 
     } catch (error) {
       toast.error(error.message || "Failed to update leave status");
     }
   };
 
-  // Mobile detection
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     handleResize();

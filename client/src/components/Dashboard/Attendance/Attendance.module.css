@@ -53,7 +53,6 @@
     color: #666;
   }
   
-  /* Status badge styles */
   :global(.statusBadge) {
     padding: 4px 8px;
     border-radius: 12px;
@@ -71,13 +70,11 @@
     color: #dc2626;
   }
   
-  /* Table header styles */
   :global(.table th) {
     background-color: #4a148c !important;
     color: white !important;
   }
 
-  /* Add these styles to your existing CSS */
 .employeeAvatar {
   width: 40px;
   height: 40px;
@@ -130,7 +127,6 @@
 }
 
 
-/* Add these to your existing styles */
 .loadingContainer {
   display: flex;
   flex-direction: column;

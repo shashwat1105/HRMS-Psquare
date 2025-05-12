@@ -20,7 +20,7 @@ export default function AttendanceManagement() {
   const [statusFilter, setStatusFilter] = useState("");
   const dispatch = useDispatch();
   
-  // Optimized Redux selector with shallow equality check
+
   const { attendance, loading } = useSelector(
     (state) => ({
       attendance: state.attendance?.attendance || [],
@@ -29,12 +29,11 @@ export default function AttendanceManagement() {
     shallowEqual
   );
 
-  // Load data only once on mount
   useEffect(() => {
     dispatch(getAllAttendance());
   }, [dispatch]);
 
-  // Memoized filtered data to prevent unnecessary recalculations
+
   const filteredAttendance = useMemo(() => {
     if (!attendance || attendance.length === 0) return [];
     
@@ -57,7 +56,7 @@ export default function AttendanceManagement() {
     });
   }, [attendance, statusFilter, searchTerm]);
 
-  // Memoized table data to prevent unnecessary mappings
+
   const tableData = useMemo(() => {
     return filteredAttendance.map((record, index) => {
       const employee = record.employee || {};
@@ -102,7 +101,6 @@ export default function AttendanceManagement() {
     
   ];
 
-  // Mobile detection
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     handleResize();

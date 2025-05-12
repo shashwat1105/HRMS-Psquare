@@ -9,18 +9,17 @@ const ModalForm = ({
   title = "Form",
   fields = [],
   initialData = {},
-  mode = "add" // "add" or "edit"
+  mode = "add" 
 }) => {
   const modalRef = useRef(null);
   const fileInputRefs = useRef({});
 
-  // Initialize form data based on fields and initialData
   const [formData, setFormData] = useState(() => {
     const data = {};
     fields.forEach(field => {
       data[field.name] = initialData[field.name] || '';
       if (field.type === 'file') {
-        data[field.name] = null; // Files should always start as null
+        data[field.name] = null; 
       } else if (field.type === 'checkbox') {
         data[field.name] = initialData[field.name] || false;
       }
@@ -30,7 +29,6 @@ const ModalForm = ({
 
   const [isFormValid, setIsFormValid] = useState(false);
 
-  // Close modal when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (modalRef.current && !modalRef.current.contains(event.target)) {
@@ -47,7 +45,7 @@ const ModalForm = ({
     };
   }, [isOpen, onClose]);
 
-  // Validate form whenever formData changes
+
   useEffect(() => {
     if (isOpen && mode === "edit") {
       const data = {};

@@ -54,7 +54,7 @@ const attendanceSlice=createSlice({
         })
         .addCase(getAllAttendance.fulfilled,(state,action)=>{
             state.loading=false;
-            state.attendance=action.payload.data; // Make sure this matches your API response
+            state.attendance=action.payload.data; 
             toast.success(action.payload.message || "Attendance fetched successfully!");
             // console.log("Attendance data:",action.payload.data);
           })
