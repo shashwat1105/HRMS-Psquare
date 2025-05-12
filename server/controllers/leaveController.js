@@ -5,39 +5,55 @@ import fs from 'fs';
 import uploadToCloudinary from '../config/cloudinary.js';
 
 export const createLeave = async (req, res) => {
- const{employee,designation,leaveDate,reason }=req.body;
-
- if(!employee || !designation || !leaveDate || !reason) {
-   return res.status(400).json({
-     success: false,
-     message: 'Please provide all required fields',
-   });
- }
+    const { employee, designation, leaveDate, reason } = req.body;
   
- let docs='';
- if (req?.files?.docs?.[0]) {
-    const path=req.files.docs[0].path;
-    docs=await uploadToCloudinary(path,'leave');
+    // Validate all required fields
+    if (!employee || !designation || !leaveDate || !reason) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide all required fields',
+      });
+    }
   
-       fs.unlinkSync(path);
- }
-
-    const leave = await Leave.create({
+    // Check if file was uploaded
+    if (!req?.files?.docs?.[0]) {
+      return res.status(400).json({
+        success: false,
+        message: 'Supporting document is required',
+      });
+    }
+  
+    try {
+      const path = req.files.docs[0].path;
+      const docs = await uploadToCloudinary(path, 'leave');
+      fs.unlinkSync(path); // Clean up the temporary file
+  
+      if (!docs) {
+        throw new Error('Failed to upload document to Cloudinary');
+      }
+  
+      const leave = await Leave.create({
         employee,
         designation,
-        date:leaveDate,
+        date: leaveDate,
         reason,
-        docs,
-        });
- 
-    await leave.save();
-    res.status(201).json({
+        docs, // Cloudinary URL
+      });
+  
+      res.status(201).json({
         message: 'Leave created successfully',
         success: true,
         data: leave,
-    });
- 
-};
+      });
+    } catch (error) {
+      console.error('Error creating leave:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to create leave',
+        error: error.message
+      });
+    }
+  };
 
 export const getAllLeaves = async (req, res) => {
     

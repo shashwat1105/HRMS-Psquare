@@ -52,23 +52,27 @@ export default function LeavesPage() {
   });
 
   // Handle saving new leave
-  const handleSaveLeave = async (newLeaveData) => {
-    try {
-      await dispatch(createLeave({
-        employee: newLeaveData.employee.id,
-        designation: newLeaveData.employee.position,
-        leaveDate: newLeaveData.leaveDate,
-        reason: newLeaveData.reason,
-        docs: newLeaveData.document
-      })).unwrap();
-      
-      toast.success("Leave request submitted successfully");
-      setIsModalOpen(false);
-      dispatch(getAllLeaves()); // Refresh leaves list
-    } catch (error) {
-      toast.error(error.message || "Failed to submit leave request");
+ // Replace your current handleSaveLeave with this more robust version
+const handleSaveLeave = async (leaveData) => {
+  try {
+    const formData = new FormData();
+    formData.append('employee', leaveData.employee);
+    formData.append('designation', leaveData.designation);
+    formData.append('leaveDate', leaveData.leaveDate);
+    formData.append('reason', leaveData.reason);
+    
+    if (leaveData.document) {
+      formData.append('docs', leaveData.document);
     }
-  };
+
+    await dispatch(createLeave(formData)).unwrap();
+    toast.success("Leave request submitted successfully");
+    return true; // Indicate success
+  } catch (error) {
+    toast.error(error.message || "Failed to submit leave request");
+    return false; // Indicate failure
+  }
+};
 
   // Handle status change
   const handleStatusChange = async (leaveId, newStatus) => {
@@ -137,9 +141,14 @@ export default function LeavesPage() {
 />
 
 <AddLeaveModal
-  isOpen={isModalOpen}
-  onClose={() => setIsModalOpen(false)}
-/>
+      isOpen={isModalOpen}
+      onClose={() => setIsModalOpen(false)}
+      onCreateSuccess={() => {
+        setIsModalOpen(false);
+        dispatch(getAllLeaves());
+      }}
+      handleSaveLeave={handleSaveLeave}
+    />
     </div>
   );
 }

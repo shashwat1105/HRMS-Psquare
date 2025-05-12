@@ -6,6 +6,9 @@ export const createLeave=createAsyncThunk('leave/createLeave',async(leaveData,{r
 try{
  const response=await instance.post('/leave/create',leaveData,{
     withCredentials:true,
+    headers:{
+        'Content-Type':'multipart/form-data',
+    },
  }
  )
     return response.data;

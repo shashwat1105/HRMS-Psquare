@@ -3,11 +3,11 @@ import { Calendar, Upload, Search, X } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-hot-toast';
 import styles from './AddLeave.module.css';
-import { createLeave } from '../../../../store/slices/leaveSlice';
+import { createLeave, getAllLeaves } from '../../../../store/slices/leaveSlice';
 
 
 
-const AddLeaveModal = ({ isOpen, onClose }) => {
+const AddLeaveModal = ({ isOpen, onClose ,handleSaveLeave,onCreateSuccess}) => {
   const dispatch = useDispatch();
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -17,7 +17,7 @@ const AddLeaveModal = ({ isOpen, onClose }) => {
     designation: '',
     leaveDate: '',
     reason: '',
-    document: null
+    docs: null
   });
   const [documentName, setDocumentName] = useState('');
   const [isFormValid, setIsFormValid] = useState(false);
@@ -104,7 +104,7 @@ const AddLeaveModal = ({ isOpen, onClose }) => {
     if (file) {
       setFormData({
         ...formData,
-        document: file
+        docs: file
       });
       setDocumentName(file.name);
     }
@@ -113,36 +113,41 @@ const AddLeaveModal = ({ isOpen, onClose }) => {
   const handleClearDocument = () => {
     setFormData(prev => ({
       ...prev,
-      document: null
+      docs: null
     }));
     setDocumentName('');
   };
 
-  const handleSubmit = async () => {
-    if (!isFormValid) return;
-
+// In your handleSubmit function
+const handleSubmit = async () => {
+    if (!isFormValid || !formData.docs) {
+      toast.error('Please fill all required fields and upload a supporting document');
+      return;
+    }
+  
     setIsSubmitting(true);
     
     try {
-      const leaveData = {
-        employee: selectedEmployee._id,
-        designation: formData.designation,
-        leaveDate: formData.leaveDate,
-        reason: formData.reason,
-        document: formData.document
-      };
-
-      await dispatch(createLeave(leaveData)).unwrap();
+      const formDataToSend = new FormData();
+      formDataToSend.append('employee', selectedEmployee._id);
+      formDataToSend.append('designation', formData.designation);
+      formDataToSend.append('leaveDate', formData.leaveDate);
+      formDataToSend.append('reason', formData.reason);
+      formDataToSend.append('docs', formData.docs); // Consistent field name
+      
+      await dispatch(createLeave(formDataToSend)).unwrap();
       
       toast.success('Leave request submitted successfully');
       onClose();
       resetForm();
+      dispatch(getAllLeaves()); // Refresh the leaves list
     } catch (error) {
       toast.error(error.message || 'Failed to submit leave request');
     } finally {
       setIsSubmitting(false);
     }
   };
+  
 
   const resetForm = () => {
     setSelectedEmployee(null);
@@ -151,7 +156,7 @@ const AddLeaveModal = ({ isOpen, onClose }) => {
       designation: '',
       leaveDate: '',
       reason: '',
-      document: null
+      docs: null
     });
     setDocumentName('');
   };
@@ -272,7 +277,7 @@ const AddLeaveModal = ({ isOpen, onClose }) => {
                   )}
                   <input
                     type="file"
-                    name="document"
+                    name="docs"
                     onChange={handleFileChange}
                     className={styles.fileInput}
                     disabled={isSubmitting}
