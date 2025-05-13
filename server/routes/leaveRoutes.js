@@ -4,8 +4,6 @@ import {
   getAllLeaves,
   getCalendarLeaves,
   updateLeaveStatus,
-  downloadLeaveDoc,
-  deleteLeave,
 } from '../controllers/leaveController.js';
 import upload from '../config/multer.js';
 

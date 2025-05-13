@@ -1,6 +1,4 @@
 import Leave from '../models/Leaves.js';
-import Employee from '../models/Employee.js';
-// import { cloudinary } from '../config/cloudinary.js';
 import fs from 'fs';
 import uploadToCloudinary from '../config/cloudinary.js';
 
