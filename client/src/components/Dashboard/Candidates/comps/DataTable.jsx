@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { MoreVertical } from "lucide-react";
 import styles from "./DataTable.module.css";
 import StatusBadge from "./StatusBadge";
-import ActionDropdown from "./ActionDropdown";
+import ActionDropdown from './ActionDropDown';
+
 
 export default function DataTable({
   columns,
